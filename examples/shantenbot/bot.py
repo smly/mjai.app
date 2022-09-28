@@ -3,7 +3,7 @@ import sys
 
 from mjx import Observation
 from mjx.agents import ShantenAgent
-from gateway import MjxGateway, to_mjai_tile
+from gateway import MjxGateway
 
 
 def main():
