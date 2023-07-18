@@ -3,6 +3,10 @@
 [AI Jansou](https://mjai.app) is a platform for mahjong AI competition.
 This repository contains the implementation of mahjong game simulator for evaluating submission files on AI Jansou.
 
+## Plan
+
+* 🚨 The competition server (mjai.app) is currently suspended and will be reopened in the end of July 2023. Please stay tuned!
+
 ## Usage
 
 You can simulate a mahjong game by specifying submission files as shown in the code below.
@@ -81,7 +85,7 @@ The following are messages sent and received as seen from player 0.
 0 -> {"type":"dahai","pai":"3s","actor":0,"tsumogiri":true}
 ```
 
-#### Case Study: Furiten (振聴)
+### Case Study: Furiten (振聴)
 
 When the player has already made a tenpai but the hand is furiten. Since the player cannot Ron, even if the waiting tile is discarded by the opponent, no action is possible.
 For example, let's say you have `2333678m 678s 678p`. The waiting tile is `14m` and `1m` has already been discarded.
@@ -93,7 +97,7 @@ Since the hand is a Furiten, even if the other player discards `1m`, the player 
 
 In this case, immediately after actor 2 discards 6m, input is given to actor 3. actor 3 needs to decide whether to call `chi` on 6m.
 
-#### Case Study: Ankan (暗槓)
+### Case Study: Ankan (暗槓)
 
 In the case of an ankan, the dora event comes first, followed by the tsumo event.
 
@@ -111,7 +115,7 @@ The procedures executed by Simulator can be checked and debugged one by one as f
 
 ```bash
 # launch
-% CONTAINER_ID=`docker run -d --rm -p 28088:3000 --mount "type=bind,src=/Users/smly/gitws/mjai-simulator/players/weakml.zip,dst=/bot.zip,readonly" smly/mjai-client:v3 sleep infinity`
+% CONTAINER_ID=`docker run -d --rm -p 28080:3000 --mount "type=bind,src=/Users/smly/gitws/mjai-simulator/players/weakml.zip,dst=/bot.zip,readonly" smly/mjai-client:v3 sleep infinity`
 
 # install
 % docker exec ${CONTAINER_ID} unzip -q /bot.zip
