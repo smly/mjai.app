@@ -1,7 +1,7 @@
 # mjai-simulator
 
-AI Jansou is a platform for mahjong AI competition.
-This repository contains the implementation of mahjong game simulator for evaluating submission files on [AI Jansou](https://mjai.app).
+[AI Jansou](https://mjai.app) is a platform for mahjong AI competition.
+This repository contains the implementation of mahjong game simulator for evaluating submission files on AI Jansou.
 
 ## Usage
 
