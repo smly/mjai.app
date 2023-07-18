@@ -30,8 +30,8 @@ def test_furiten():
         '[{"type":"dahai","actor":3,"pai":"P","tsumogiri":true},{"type":"tsumo","actor":0,"pai":"?"},{"type":"dahai","actor":0,"pai":"2p","tsumogiri":true},{"type":"tsumo","actor":1,"pai":"?"},{"type":"dahai","actor":1,"pai":"4m","tsumogiri":true},{"type":"tsumo","actor":2,"pai":"?"},{"type":"dahai","actor":2,"pai":"6m","tsumogiri":true}]',
     ]
 
-    sys.path.append("./players/tsumogiri")
-    mod = importlib.import_module("bot")
+    sys.path.append("./players")
+    mod = importlib.import_module("tsumogiri.bot")
 
     player_id = 3
     bot = mod.Bot(player_id)
