@@ -1,3 +1,4 @@
-torch==1.12.1
-numpy==1.23.3
+torch==2.0.1
+numpy==1.25.1
 loguru
+mahjong
