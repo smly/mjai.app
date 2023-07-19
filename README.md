@@ -1,11 +1,9 @@
+🚨The competition server (mjai.app) is currently suspended and will be reopened in the end of July 2023. Please stay tuned!🚨
+
 # mjai-simulator
 
 [AI Jansou](https://mjai.app) is a platform for mahjong AI competition.
 This repository contains the implementation of mahjong game simulator for evaluating submission files on AI Jansou.
-
-## Plan
-
-* 🚨 The competition server (mjai.app) is currently suspended and will be reopened in the end of July 2023. Please stay tuned!
 
 ## Usage
 
