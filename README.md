@@ -1,4 +1,4 @@
-🚨The competition server (mjai.app) is currently suspended and will be reopened in the end of July 2023. Please stay tuned!🚨
+🚨[AI Jansou](https://mjai.app) is currently suspended and will be reopened in the end of July 2023. Please stay tuned!🚨
 
 # mjai-simulator
 
