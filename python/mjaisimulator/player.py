@@ -98,7 +98,7 @@ class MjaiPlayerClient:
             "--mount",
             f"type=bind,src={self.submission_path.resolve()},dst=/bot.zip,readonly",  # noqa: E501
             "--mount",
-            f"type=bind,src={Path.cwd() / 'python/mjaisimulator/http_server/server.py'},dst=/workspace/00__server__.py,readonly",  # noqa: E501
+            f"type=bind,src={Path(__file__).parent / 'http_server/server.py'},dst=/workspace/00__server__.py,readonly",  # noqa: E501
             self.docker_image_name,
             "/workspace/.pyenv/shims/python",
             "-u",
@@ -121,6 +121,7 @@ class MjaiPlayerClient:
         # Workaround: http server が立ち上がる前にリクエストが飛ぶとエラーになる
         time.sleep(1.0)
 
+        wait_start_ts = time.time()
         while True:
             try:
                 resp = requests.get(
@@ -130,6 +131,10 @@ class MjaiPlayerClient:
                     break
             except requests.exceptions.ConnectionError:
                 time.sleep(0.1)
+                if time.time() - wait_start_ts > 10.0:
+                    raise ValueError(
+                        "Failed to receive response from http server: timeout"
+                    )
                 continue
         logger.info(f"Done. Player {player_id} is ready!")
 
