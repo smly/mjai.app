@@ -132,7 +132,9 @@ class MjaiPlayerClient:
             except requests.exceptions.ConnectionError:
                 time.sleep(0.1)
                 if time.time() - wait_start_ts > 10.0:
-                    raise ValueError("Failed to receive response from http server: timeout")
+                    raise ValueError(
+                        "Failed to receive response from http server: timeout"
+                    )
                 continue
         logger.info(f"Done. Player {player_id} is ready!")
 
