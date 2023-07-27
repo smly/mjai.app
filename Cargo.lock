@@ -76,9 +76,9 @@ dependencies = [
 
 [[package]]
 name = "boomphf"
-version = "0.5.9"
+version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4e8fb7f38fef59c32549861151d63a6190865e60cf690340c13e3d7178b42a2f"
+checksum = "617e2d952880a00583ddb9237ac3965732e8df6a92a8e7bcc054100ec467ec3b"
 dependencies = [
  "crossbeam-utils",
  "log",
