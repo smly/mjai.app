@@ -1,5 +1,3 @@
-🚨[AI Jansou](https://mjai.app) is currently suspended and will be reopened on July 30, 2023. Please stay tuned!🚨
-
 # mjai-simulator
 
 [AI Jansou](https://mjai.app) is a platform for mahjong AI competition.
