@@ -1,8 +1,6 @@
-from mjai.bot import (
-    RiichiBot,
-    vec34_index_to_mjai_tile,
-    vec34_index_to_tenhou_tile,
-)
+import json
+
+from mjai.bot import vec34_index_to_mjai_tile, vec34_index_to_tenhou_tile
 from mjai.mlibriichi.tools import find_improving_tiles  # type: ignore
 
 from mjai import Bot
@@ -28,7 +26,104 @@ def test_find_improving_tiles():
 
     assert (
         player.react(
-            """[{"type":"start_kyoku","bakaze":"S","dora_marker":"1p","kyoku":2,"honba":2,"kyotaku":0,"oya":1,"scores":[800,61100,11300,26800],"tehais":[["4p","4s","P","3p","1p","5s","2m","F","1m","7s","9m","6m","9s"],["?","?","?","?","?","?","?","?","?","?","?","?","?"],["?","?","?","?","?","?","?","?","?","?","?","?","?"],["?","?","?","?","?","?","?","?","?","?","?","?","?"]]},{"type":"tsumo","actor":1,"pai":"?"},{"type":"dahai","actor":1,"pai":"F","tsumogiri":false},{"type":"tsumo","actor":2,"pai":"?"},{"type":"dahai","actor":2,"pai":"3m","tsumogiri":true},{"type":"tsumo","actor":3,"pai":"?"},{"type":"dahai","actor":3,"pai":"1m","tsumogiri":true},{"type":"tsumo","actor":0,"pai":"3s"}]"""
+            json.dumps(
+                [
+                    {
+                        "type": "start_kyoku",
+                        "bakaze": "S",
+                        "dora_marker": "1p",
+                        "kyoku": 2,
+                        "honba": 2,
+                        "kyotaku": 0,
+                        "oya": 1,
+                        "scores": [800, 61100, 11300, 26800],
+                        "tehais": [
+                            [
+                                "4p",
+                                "4s",
+                                "P",
+                                "3p",
+                                "1p",
+                                "5s",
+                                "2m",
+                                "F",
+                                "1m",
+                                "7s",
+                                "9m",
+                                "6m",
+                                "9s",
+                            ],
+                            [
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                            ],
+                            [
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                            ],
+                            [
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                                "?",
+                            ],
+                        ],
+                    },
+                    {"type": "tsumo", "actor": 1, "pai": "?"},
+                    {
+                        "type": "dahai",
+                        "actor": 1,
+                        "pai": "F",
+                        "tsumogiri": False,
+                    },
+                    {"type": "tsumo", "actor": 2, "pai": "?"},
+                    {
+                        "type": "dahai",
+                        "actor": 2,
+                        "pai": "3m",
+                        "tsumogiri": True,
+                    },
+                    {"type": "tsumo", "actor": 3, "pai": "?"},
+                    {
+                        "type": "dahai",
+                        "actor": 3,
+                        "pai": "1m",
+                        "tsumogiri": True,
+                    },
+                    {"type": "tsumo", "actor": 0, "pai": "3s"},
+                ]
+            )
         )
         == '{"type":"dahai","pai":"3s","actor":0,"tsumogiri":true}'
     )
@@ -59,7 +154,23 @@ def test_tsumogiri_bot():
 
     assert (
         player.react(
-            """[{"type":"start_kyoku","bakaze":"S","dora_marker":"1p","kyoku":2,"honba":2,"kyotaku":0,"oya":1,"scores":[800,61100,11300,26800],"tehais":[["4p","4s","P","3p","1p","5s","2m","F","1m","7s","9m","6m","9s"],["?","?","?","?","?","?","?","?","?","?","?","?","?"],["?","?","?","?","?","?","?","?","?","?","?","?","?"],["?","?","?","?","?","?","?","?","?","?","?","?","?"]]},{"type":"tsumo","actor":1,"pai":"?"},{"type":"dahai","actor":1,"pai":"F","tsumogiri":false},{"type":"tsumo","actor":2,"pai":"?"},{"type":"dahai","actor":2,"pai":"3m","tsumogiri":true},{"type":"tsumo","actor":3,"pai":"?"},{"type":"dahai","actor":3,"pai":"1m","tsumogiri":true},{"type":"tsumo","actor":0,"pai":"3s"}]"""
+            """
+            [{"type":"start_kyoku","bakaze":"S","dora_marker":"1p","kyoku":2,
+            "honba":2,"kyotaku":0,"oya":1,"scores":[800,61100,11300,26800],
+            "tehais":
+            [["4p","4s","P","3p","1p","5s","2m","F","1m","7s","9m","6m","9s"],
+            ["?","?","?","?","?","?","?","?","?","?","?","?","?"],
+            ["?","?","?","?","?","?","?","?","?","?","?","?","?"],
+            ["?","?","?","?","?","?","?","?","?","?","?","?","?"]]},
+            {"type":"tsumo","actor":1,"pai":"?"},
+            {"type":"dahai","actor":1,"pai":"F","tsumogiri":false},
+            {"type":"tsumo","actor":2,"pai":"?"},
+            {"type":"dahai","actor":2,"pai":"3m","tsumogiri":true},
+            {"type":"tsumo","actor":3,"pai":"?"},
+            {"type":"dahai","actor":3,"pai":"1m","tsumogiri":true},
+            {"type":"tsumo","actor":0,"pai":"3s"}]""".replace(
+                "\n", ""
+            ).strip()
         )
         == '{"type":"dahai","pai":"3s","actor":0,"tsumogiri":true}'
     )
@@ -83,7 +194,23 @@ def test_custom_bot():
     )
     assert (
         player.react(
-            """[{"type":"start_kyoku","bakaze":"S","dora_marker":"1p","kyoku":2,"honba":2,"kyotaku":0,"oya":1,"scores":[800,61100,11300,26800],"tehais":[["4p","4s","P","3p","1p","5s","2m","F","1m","7s","9m","6m","9s"],["?","?","?","?","?","?","?","?","?","?","?","?","?"],["?","?","?","?","?","?","?","?","?","?","?","?","?"],["?","?","?","?","?","?","?","?","?","?","?","?","?"]]},{"type":"tsumo","actor":1,"pai":"?"},{"type":"dahai","actor":1,"pai":"F","tsumogiri":false},{"type":"tsumo","actor":2,"pai":"?"},{"type":"dahai","actor":2,"pai":"3m","tsumogiri":true},{"type":"tsumo","actor":3,"pai":"?"},{"type":"dahai","actor":3,"pai":"1m","tsumogiri":true},{"type":"tsumo","actor":0,"pai":"3s"}]"""
+            """
+            [{"type":"start_kyoku","bakaze":"S","dora_marker":"1p","kyoku":2,
+            "honba":2,"kyotaku":0,"oya":1,"scores":[800,61100,11300,26800],
+            "tehais":
+            [["4p","4s","P","3p","1p","5s","2m","F","1m","7s","9m","6m","9s"],
+            ["?","?","?","?","?","?","?","?","?","?","?","?","?"],
+            ["?","?","?","?","?","?","?","?","?","?","?","?","?"],
+            ["?","?","?","?","?","?","?","?","?","?","?","?","?"]]},
+            {"type":"tsumo","actor":1,"pai":"?"},
+            {"type":"dahai","actor":1,"pai":"F","tsumogiri":false},
+            {"type":"tsumo","actor":2,"pai":"?"},
+            {"type":"dahai","actor":2,"pai":"3m","tsumogiri":true},
+            {"type":"tsumo","actor":3,"pai":"?"},
+            {"type":"dahai","actor":3,"pai":"1m","tsumogiri":true},
+            {"type":"tsumo","actor":0,"pai":"3s"}]""".replace(
+                "\n", ""
+            ).strip()
         )
         == '{"type":"none"}'
     )

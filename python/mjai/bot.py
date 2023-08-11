@@ -264,11 +264,13 @@ class Bot:
     def tehai_vec34(self) -> list[int]:
         """
         Player's hand as a list of tile counts.
-        Aka dora is not distinguished. For identifying aka dora, use `self.player_akas_in_hand`.
+        Aka dora is not distinguished.
+        For identifying aka dora, use `self.player_akas_in_hand`.
 
         Example:
             >>> bot.tehai_vec34
-            [1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0]
+            [1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1,
+             1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0]
         """
         return self.player_state.tehai
 
@@ -279,7 +281,8 @@ class Bot:
 
         Example:
             >>> bot.tehai_mjai
-            ["1m", "2m", "6m", "9m", "1p", "3p", "4p", "3s", "4s", "5s", "7s", "9s", "5z", "6z"]
+            ["1m", "2m", "6m", "9m", "1p", "3p", "4p", "3s", "4s", "5s",
+             "7s", "9s", "5z", "6z"]
         """
         zi_map = ["E", "S", "W", "N", "P", "F", "C"]
         ms, ps, ss, zis, akas = [], [], [], [], []
@@ -521,61 +524,3 @@ PS
  'self_riichi_accepted', 'chis', 'akas_in_hand',
  'player_id', 'at_turn']
 """
-
-
-def test():
-    b = RiichiBot(0)
-    print(
-        b.react("""[{"type":"start_game","names":["0","1","2","3"],"id":0}]""")
-    )
-    print(
-        b.react(
-            """[{"type":"start_kyoku","bakaze":"S","dora_marker":"1p","kyoku":2,"honba":2,"kyotaku":0,"oya":1,"scores":[800,61100,11300,26800],"tehais":[["4p","4s","P","3p","1p","5s","2m","F","1m","7s","9m","6m","9s"],["?","?","?","?","?","?","?","?","?","?","?","?","?"],["?","?","?","?","?","?","?","?","?","?","?","?","?"],["?","?","?","?","?","?","?","?","?","?","?","?","?"]]},{"type":"tsumo","actor":1,"pai":"?"},{"type":"dahai","actor":1,"pai":"F","tsumogiri":false},{"type":"tsumo","actor":2,"pai":"?"},{"type":"dahai","actor":2,"pai":"3m","tsumogiri":true},{"type":"tsumo","actor":3,"pai":"?"},{"type":"dahai","actor":3,"pai":"1m","tsumogiri":true},{"type":"tsumo","actor":0,"pai":"3s"}]"""
-        )
-    )
-
-    # ps = PlayerState(0)
-    # print(ps.update('{"type":"start_game","names":["0","1","2","3"],"id":0}'))
-    # ac = ps.update('{"type":"start_kyoku","bakaze":"S","dora_marker":"1p","kyoku":2,"honba":2,"kyotaku":0,"oya":1,"scores":[800,61100,11300,26800],"tehais":[["4p","4s","P","3p","1p","5s","2m","F","1m","7s","9m","6m","9s"],["?","?","?","?","?","?","?","?","?","?","?","?","?"],["?","?","?","?","?","?","?","?","?","?","?","?","?"],["?","?","?","?","?","?","?","?","?","?","?","?","?"]]}')
-
-    # print(ps.brief_info())
-    # print(ps.at_turn)
-    # print(ps.is_oya)
-    # print(ps.can_w_riichi)
-    # print(ac.can_pon)
-    # print(ac.can_riichi)
-    # print(ac)
-
-    # ac = ps.update('{"type":"tsumo","actor":1,"pai":"?"}')
-    # print(ac)
-
-    # ac = ps.update('{"type":"dahai","actor":1,"pai":"F","tsumogiri":false}')
-    # print(ac)
-
-    # ac = ps.update('{"type":"tsumo","actor":2,"pai":"?"}')
-    # print(ac)
-
-    # ac = ps.update('{"type":"dahai","actor":2,"pai":"3m","tsumogiri":true}')
-    # print(ac)
-
-    # ac = ps.update('{"type":"tsumo","actor":3,"pai":"?"}')
-    # print(ac)
-
-    # ac = ps.update('{"type":"dahai","actor":3,"pai":"1m","tsumogiri":true}')
-    # print(ac)
-
-    # ac = ps.update('{"type":"tsumo","actor":0,"pai":"3s"}')
-    # print(ps.__dir__())
-    # print(ac.__dir__())
-    # print(ps.last_self_tsumo())
-    # print(ac.can_riichi, ac.can_tsumo_agari, ac.can_ron_agari)
-
-    # ac = ps.update('{"type":"dahai","actor":0,"pai":"3s","tsumogiri":true}')
-    # print(ac)
-    # print(ps.update('{"type":"start_game","names":["0","1","2","3"],"id":0}'))
-    # ac = ps.update('{"type":"start_kyoku","bakaze":"S","dora_marker":"1p","kyoku":2,"honba":2,"kyotaku":0,"oya":1,"scores":[800,61100,11300,26800],"tehais":[["4p","4s","P","3p","1p","5s","2m","F","1m","7s","9m","6m","9s"],["?","?","?","?","?","?","?","?","?","?","?","?","?"],["?","?","?","?","?","?","?","?","?","?","?","?","?"],["?","?","?","?","?","?","?","?","?","?","?","?","?"]]}')
-    # print(ps.brief_info())
-
-
-if __name__ == "__main__":
-    test()
