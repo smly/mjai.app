@@ -58,6 +58,8 @@ def convert_tehai_vec34_as_tenhou(
 
 def vec34_index_to_tenhou_tile(index: int) -> str:
     """
+    Vec34 index to tenhou.net/2 format
+
     Example:
         >>> vec34_index_to_tenhou_tile(0)
         "1m"
@@ -108,6 +110,8 @@ def vec34_index_to_tenhou_tile(index: int) -> str:
 
 def vec34_index_to_mjai_tile(index: int) -> str:
     """
+    Vec34 index to mjai format
+
     Example:
         >>> vec34_index_to_tenhou_tile(0)
         "1m"

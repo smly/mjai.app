@@ -114,6 +114,12 @@ class Bot:
     # ==========================================================
     # player state properties
 
+    def validate_reaction(self, reaction: str) -> bool:
+        """
+        Validate the reaction string.
+        """
+        return self.player_state.validate_reaction(reaction)
+
     """
     PS
     ['ankan_candidates', 'kakan_candidates',
@@ -239,8 +245,10 @@ class Bot:
     def shanten(self) -> int:
         """
         Shanten of the player's hand.
+
+        0 indicates tenpai.
         """
-        return self.player_state.shanten
+        return self.player_state.shanten - 1
 
     # ==========================================================
     # table state properties

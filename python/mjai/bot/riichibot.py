@@ -14,14 +14,11 @@ class RiichiBot(Bot):
             return self.action_ron_agari()
         elif self.can_riichi:
             return self.action_riichi()
-
-        if self.can_discard:
+        elif self.can_discard:
             candidates = self.find_improving_tiles()
-            candidates = list(
-                sorted(candidates, key=lambda x: len(x[1]), reverse=True)
-            )
             for discard_tile, improving_tiles in candidates:
                 return self.action_discard(discard_tile)
             return self.action_discard(self.last_self_tsumo)
         else:
+            # Response toward start_game, ryukyoku, etc
             return self.action_nothing()
