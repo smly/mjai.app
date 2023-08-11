@@ -39,7 +39,7 @@ def test_custom_bot():
         == '{"type":"pon","actor":0,"target":3,"pai":"P","consumed":["P","P"]}'
     )
     assert player.last_kawa_tile == "P"
-    assert player.last_self_tsumo is None
+    assert player.last_self_tsumo == ""  # No tsumo events yet
     assert player.tehai_tenhou == "129m134p4567s556z"
 
     assert (

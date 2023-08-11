@@ -14,6 +14,12 @@ class RulebaseBot(Bot):
 
         if self.can_pon and self.is_yakuhai(self.last_kawa_tile):
             # TODO: 手の進まないポンはしない
+            # TODO: 赤ドラを考慮する
+            return self.action_pon(consumed=[self.last_kawa_tile] * 2)
+
+        elif self.can_pon and len(self.get_call_events(self.player_id)) > 0:
+            # TODO: 手の進まないポンはしない
+            # TODO: 赤ドラを考慮する
             return self.action_pon(consumed=[self.last_kawa_tile] * 2)
 
         elif self.can_chi and len(self.get_call_events(self.player_id)) > 0:
@@ -21,7 +27,6 @@ class RulebaseBot(Bot):
             # TODO: chi においてドラを考慮する
             # TODO: 候補を tools から取得して選択できるようにする
             # TODO: 候補に対して hand analysis して受け入れ枚数最大となるようなチーを選択する
-
             color = self.last_kawa_tile[1]
             target_num = int(self.last_kawa_tile[0])
             if self.can_chi_high:
