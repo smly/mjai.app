@@ -2,7 +2,7 @@ import os
 
 from mjai import MjaiPlayerClient
 from mjai.engine import BaseMjaiLogEngine, DockerMjaiLogEngine
-from mlibriichi.mlibriichi.arena import Match
+from mjai.mlibriichi.arena import Match
 
 
 def test_game_four_new():

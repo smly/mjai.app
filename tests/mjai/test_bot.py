@@ -1,7 +1,7 @@
 from mjai import Bot
 from mjai.bot import RiichiBot, vec34_index_to_tenhou_tile, vec34_index_to_mjai_tile
 
-from mlibriichi.mlibriichi.tools import find_improving_tiles  # type: ignore
+from mjai.mlibriichi.tools import find_improving_tiles  # type: ignore
 
 
 class MyBot(Bot):

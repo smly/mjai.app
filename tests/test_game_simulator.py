@@ -9,7 +9,7 @@ from mjai import MjaiPlayerClient
 from mjai.engine import DockerMjaiLogEngine
 from mjai.exceptions import EngineRuntimeError
 from mjai.game import Simulator
-from mlibriichi.mlibriichi.arena import Match
+from mjai.mlibriichi.arena import Match
 
 
 def test_regular_game():

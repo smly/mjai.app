@@ -1,8 +1,8 @@
 import json
 import sys
 
-from mlibriichi.mlibriichi.state import PlayerState, ActionCandidate  # type: ignore
-from mlibriichi.mlibriichi.tools import find_improving_tiles  # type: ignore
+from mjai.mlibriichi.state import PlayerState, ActionCandidate  # type: ignore
+from mjai.mlibriichi.tools import find_improving_tiles  # type: ignore
 
 
 def convert_tehai_vec34_as_tenhou(tehai_vec34: list[int], akas_in_hand: list[bool] | None) -> str:

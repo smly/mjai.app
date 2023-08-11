@@ -26,6 +26,7 @@ test = [
 [tool.maturin]
 features = ["pyo3/extension-module"]
 python-source = "python"
+module-name = "mjai.mlibriichi"
 
 [tool.black]
 line-length = 79
