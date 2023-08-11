@@ -566,7 +566,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "mlibriichi"
+name = "mjai"
 version = "0.1.9"
 dependencies = [
  "ahash",
