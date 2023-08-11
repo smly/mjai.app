@@ -1,5 +1,5 @@
 import pytest
-from mjaisimulator.elo import update_multi_players_elo
+from mjai.elo import update_multi_players_elo
 
 
 def test_update_multi_player_elo():

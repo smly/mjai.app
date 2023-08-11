@@ -1,7 +1,7 @@
 from collections import Counter
 from pathlib import Path
 
-from mjaisimulator.matching import Matching
+from mjai.matching import Matching
 
 
 def test_matching_init():

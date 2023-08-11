@@ -20,14 +20,14 @@ def test_get_best_tile():
         "8m",
         "1m",
     ]
-    sys.path.append("./players/shanten")
+    sys.path.append("./examples/shanten")
     mod = importlib.import_module("bot")
     best_choice = mod.get_best_tile(tiles)
     assert best_choice in ["6p", "C", "E"]
 
 
 def test_shanten_bot():
-    sys.path.append("./players/shanten")
+    sys.path.append("./examples/shanten")
     mod = importlib.import_module("bot")
 
     player_id = 0

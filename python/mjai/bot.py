@@ -347,14 +347,35 @@ class Bot:
             sys.stdout.write(resp + "\n")
             sys.stdout.flush()
 
+    def find_improving_tiles(self) -> list[tuple[str, list[str]]]:
+        def _aka(tile: str) -> str:
+            # Use aka if needeed
+            if tile == '5s' and self.tehai_vec34[4] == 1 and self.akas_in_hand[0]:
+                return '5sr'
+            if tile == '5p' and self.tehai_vec34[4 + 9] == 1 and self.akas_in_hand[1]:
+                return '5pr'
+            if tile == '5p' and self.tehai_vec34[4 + 18] == 1 and self.akas_in_hand[2]:
+                return '5pr'
+            return tile
+
+        candidates = find_improving_tiles(self.tehai_tenhou)
+        candidates = list(sorted(candidates, key=lambda x: len(x[1]), reverse=True))
+        return [
+            (
+                _aka(vec34_index_to_mjai_tile(discard_tile_idx)),
+                [vec34_index_to_mjai_tile(tile_idx) for tile_idx in improving_tile_indices]
+            )
+            for discard_tile_idx, improving_tile_indices in candidates
+        ]
+
+
+class RulebaseBot(Bot):
+    # RiichiBot + yakuhai pon + {chi,pon} if yaku is ready.
+    # {chi,pon} if tanyao. no call if tenpai.
+    pass
+
 
 class RiichiBot(Bot):
-    """
-    * 立直する
-    * ロンあがりする
-    * 受け入れ最大となる牌を切る
-
-    """
     def __init__(self, player_id: int = 0):
         super().__init__(player_id)
 
@@ -363,31 +384,15 @@ class RiichiBot(Bot):
             return self.action_tsumo_agari()
         elif self.can_ron_agari:
             return self.action_ron_agari()
-        elif self.self_riichi_declared:
-            # Dahai action just after riichi declaration
-            # 受け入れ最大となる牌を切る
-            candidates = find_improving_tiles(self.tehai_tenhou)
-            candidates = list(sorted(candidates, key=lambda x: len(x[1]), reverse=True))
-            for candidate in candidates:
-                return self.action_discard(vec34_index_to_mjai_tile(candidate[0]))
-
-            # 候補がない場合は最後にツモった牌を切る
-            tile_str = self.last_self_tsumo
-            return self.action_discard(tile_str)
         elif self.can_riichi:
             return self.action_riichi()
 
-        # TODO: ポン、チー、カンする
-
         if self.can_discard:
-            # 受け入れ最大となる牌を切る
-            candidates = find_improving_tiles(self.tehai_tenhou)
+            candidates = self.find_improving_tiles()
             candidates = list(sorted(candidates, key=lambda x: len(x[1]), reverse=True))
-            for candidate in candidates:
-                return self.action_discard(vec34_index_to_mjai_tile(candidate[0]))
-
-            tile_str = self.last_self_tsumo
-            return self.action_discard(tile_str)
+            for discard_tile, improving_tiles in candidates:
+                return self.action_discard(discard_tile)
+            return self.action_discard(self.last_self_tsumo)
         else:
             return self.action_nothing()
 

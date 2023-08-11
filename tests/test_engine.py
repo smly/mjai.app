@@ -1,8 +1,8 @@
 import os
 
-from mjaisimulator import MjaiPlayerClient
-from mjaisimulator.engine import BaseMjaiLogEngine, DockerMjaiLogEngine
-from mjaisimulator.mjaisimulator.arena import Match
+from mjai import MjaiPlayerClient
+from mjai.engine import BaseMjaiLogEngine, DockerMjaiLogEngine
+from mlibriichi.mlibriichi.arena import Match
 
 
 def test_game_four_new():
@@ -37,7 +37,7 @@ def test_tsumogiri_player_with_docker_wrapper():
     assert env is not None
 
     if bool(os.getenv("SKIP_TEST_WITH_DOCKER")) is False:
-        tsumogiri_player = MjaiPlayerClient("./players/tsumogiri.zip")
+        tsumogiri_player = MjaiPlayerClient("./examples/tsumogiri.zip")
         tsumogiri_player.launch_container(0)
         agent1 = DockerMjaiLogEngine(name="0", player=tsumogiri_player)
         agent2 = BaseMjaiLogEngine(name="1")
@@ -69,10 +69,10 @@ def test_multiple_players_with_docker_wrapper():
 
     if bool(os.getenv("SKIP_TEST_WITH_DOCKER")) is False:
         players = [
-            MjaiPlayerClient("./players/tsumogiri.zip", port_num=28080),
-            MjaiPlayerClient("./players/tsumogiri.zip", port_num=28081),
-            MjaiPlayerClient("./players/tsumogiri.zip", port_num=28082),
-            MjaiPlayerClient("./players/shanten.zip", port_num=28083),
+            MjaiPlayerClient("./examples/tsumogiri.zip", port_num=28080),
+            MjaiPlayerClient("./examples/tsumogiri.zip", port_num=28081),
+            MjaiPlayerClient("./examples/tsumogiri.zip", port_num=28082),
+            MjaiPlayerClient("./examples/shanten.zip", port_num=28083),
         ]
         for player_idx, player in enumerate(players):
             player.launch_container(player_idx)

@@ -3,7 +3,7 @@ import sys
 
 
 def test_tsumobiri_bot():
-    sys.path.append("./players/tsumogiri")
+    sys.path.append("./examples/tsumogiri")
     mod = importlib.import_module("bot")
 
     for player_id in range(4):

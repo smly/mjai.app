@@ -1,4 +1,4 @@
-from mjaisimulator.game import kyoku_to_zero_indexed_kyoku, to_rank
+from mjai.game import kyoku_to_zero_indexed_kyoku, to_rank
 
 
 def test_to_rank():
