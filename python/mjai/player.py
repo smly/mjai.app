@@ -3,7 +3,7 @@ Docker コンテナに submission file を配置して実行するためのラ�
 
 1. submission file をマウントした Docker コンテナを起動
 2. Docker コンテナに submission file のアーカイブを展開する
-3. Docker コンテナ内で `python/mjaisimulator/http_server/server.py` を実行する
+3. Docker コンテナ内で `python/mjai/http_server/server.py` を実行する
 """
 import json
 import shutil
