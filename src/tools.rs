@@ -4,7 +4,6 @@ use pyo3::prelude::*;
 
 use riichi_tools_rs::riichi::hand::Hand;
 
-
 #[pyfunction]
 pub fn find_improving_tiles(tehai_tenhou: &str) -> Vec<(u8, Vec<u8>)> {
     let mut vec = vec![];
@@ -15,8 +14,8 @@ pub fn find_improving_tiles(tehai_tenhou: &str) -> Vec<(u8, Vec<u8>)> {
                 for dt in hand.find_shanten_improving_tiles(None) {
                     let next_hand: Vec<u8> = dt.1.iter().map(|x| x.0.to_id() - 1).collect();
                     vec.push((dt.0.unwrap().to_id() - 1, next_hand));
-                }    
-            }        
+                }
+            }
         }
         _ => {}
     }
