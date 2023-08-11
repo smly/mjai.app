@@ -1,5 +1,5 @@
 def convert_tehai_vec34_as_tenhou(
-    tehai_vec34: list[int], akas_in_hand: list[bool] | None
+    tehai_vec34: list[int], akas_in_hand: list[bool] | None = None
 ) -> str:
     """
     Convert tehai_vec34 to tenhou.net/2 format

@@ -32,21 +32,6 @@ class Bot:
         return self.action_candidate.can_riichi
 
     @property
-    def can_kakan(self) -> bool:
-        assert self.action_candidate is not None
-        return self.action_candidate.can_kakan
-
-    @property
-    def can_daiminkan(self) -> bool:
-        assert self.action_candidate is not None
-        return self.action_candidate.can_daiminkan
-
-    @property
-    def can_pon(self) -> bool:
-        assert self.action_candidate is not None
-        return self.action_candidate.can_pon
-
-    @property
     def can_agari(self) -> bool:
         assert self.action_candidate is not None
         return self.action_candidate.can_agari
@@ -66,21 +51,60 @@ class Bot:
         assert self.action_candidate is not None
         return self.action_candidate.can_ryukyoku
 
-        """
-        AC
-        ['can_chi_mid', 'can_chi_low', 'can_chi', 'can_chi_high',
-         'can_act', 'can_kan', 'can_ankan', 'can_pass']
-        """
+    @property
+    def can_kakan(self) -> bool:
+        assert self.action_candidate is not None
+        return self.action_candidate.can_kakan
 
-        """
-        PS
-        ['ankan_candidates', 'kakan_candidates',
-        'validate_reaction', 'brief_info',
-        'can_w_riichi', 'last_cans', 'at_furiten',
-        'minkans', 'ankans', 'pons', 'kyotaku',
-        'self_riichi_accepted', 'chis', 'akas_in_hand',
-        'player_id', 'at_turn']
-        """
+    @property
+    def can_daiminkan(self) -> bool:
+        assert self.action_candidate is not None
+        return self.action_candidate.can_daiminkan
+
+    @property
+    def can_kan(self) -> bool:
+        assert self.action_candidate is not None
+        return self.action_candidate.can_kan
+
+    @property
+    def can_ankan(self) -> bool:
+        assert self.action_candidate is not None
+        return self.action_candidate.can_ankan
+
+    @property
+    def can_pon(self) -> bool:
+        assert self.action_candidate is not None
+        return self.action_candidate.can_pon
+
+    @property
+    def can_chi(self) -> bool:
+        assert self.action_candidate is not None
+        return self.action_candidate.can_chi
+
+    @property
+    def can_chi_low(self) -> bool:
+        assert self.action_candidate is not None
+        return self.action_candidate.can_chi_low
+
+    @property
+    def can_chi_mid(self) -> bool:
+        assert self.action_candidate is not None
+        return self.action_candidate.can_chi_mid
+
+    @property
+    def can_chi_high(self) -> bool:
+        assert self.action_candidate is not None
+        return self.action_candidate.can_chi_high
+
+    @property
+    def can_act(self) -> bool:
+        assert self.action_candidate is not None
+        return self.action_candidate.can_act
+
+    @property
+    def can_pass(self) -> bool:
+        assert self.action_candidate is not None
+        return self.action_candidate.can_pass
 
     @property
     def target_actor(self) -> int:
@@ -89,6 +113,16 @@ class Bot:
 
     # ==========================================================
     # player state properties
+
+    """
+    PS
+    ['ankan_candidates', 'kakan_candidates',
+    'validate_reaction', 'brief_info',
+    'can_w_riichi', 'last_cans', 'at_furiten',
+    'minkans', 'ankans', 'pons', 'kyotaku',
+    'self_riichi_accepted', 'chis', 'akas_in_hand',
+    'player_id', 'at_turn']
+    """
 
     @property
     def is_oya(self) -> bool:
