@@ -1,0 +1,34 @@
+{
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/mjaisimulator.cpython*.so": true,
+    "**/.pytest_cache": true,
+    "target": true
+  },
+  "[python]": {
+    "editor.tabSize": 4,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "python.analysis.extraPaths": [
+    "./python/mjaisimulator",
+    "./players"
+  ],
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    // isort
+    "source.organizeImports": true
+  },
+  "python.formatting.blackArgs": [],
+  "python.formatting.provider": "none",
+  "python.linting.enabled": true,
+  "python.linting.flake8Enabled": true,
+  "python.linting.flake8Args": [
+    "--ignore=W503"
+  ],
+  "python.linting.lintOnSave": true,
+  "python.linting.pylintEnabled": false,
+  "rust-analyzer.linkedProjects": [
+    "./Cargo.toml"
+  ],
+}

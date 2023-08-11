@@ -1,6 +1,7 @@
 import os
 
 import pytest
+
 from mjai import MjaiPlayerClient, TimeoutExpired, Verification
 
 

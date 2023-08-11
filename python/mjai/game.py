@@ -9,7 +9,7 @@ from typing import Any
 from loguru import logger
 from mjai.engine import DockerMjaiLogEngine
 from mjai.exceptions import EngineRuntimeError, TimeoutExpired
-from mjai.mlibriichi.arena import Match
+from mjai.mlibriichi.arena import Match  # type: ignore
 from mjai.player import MjaiPlayerClient
 
 

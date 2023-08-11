@@ -1,8 +1,9 @@
 import os
 
-from mjai import MjaiPlayerClient
 from mjai.engine import BaseMjaiLogEngine, DockerMjaiLogEngine
 from mjai.mlibriichi.arena import Match
+
+from mjai import MjaiPlayerClient
 
 
 def test_game_four_new():

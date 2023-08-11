@@ -1,11 +1,13 @@
 import json
 import sys
 
-from mjai.mlibriichi.state import PlayerState, ActionCandidate  # type: ignore
+from mjai.mlibriichi.state import ActionCandidate, PlayerState  # type: ignore
 from mjai.mlibriichi.tools import find_improving_tiles  # type: ignore
 
 
-def convert_tehai_vec34_as_tenhou(tehai_vec34: list[int], akas_in_hand: list[bool] | None) -> str:
+def convert_tehai_vec34_as_tenhou(
+    tehai_vec34: list[int], akas_in_hand: list[bool] | None
+) -> str:
     """
     Convert tehai_vec34 to tenhou.net/2 format
 
@@ -17,15 +19,27 @@ def convert_tehai_vec34_as_tenhou(tehai_vec34: list[int], akas_in_hand: list[boo
         if tile_idx == 4:
             if akas_in_hand and akas_in_hand[0]:
                 ms.append(0)
-            ms += [5] * (tile_count - 1 if akas_in_hand and akas_in_hand[0] else tile_count)
+            ms += [5] * (
+                tile_count - 1
+                if akas_in_hand and akas_in_hand[0]
+                else tile_count
+            )
         elif tile_idx == 4 + 9:
             if akas_in_hand and akas_in_hand[1]:
                 ps.append(0)
-            ps += [5] * (tile_count - 1 if akas_in_hand and akas_in_hand[1] else tile_count)
+            ps += [5] * (
+                tile_count - 1
+                if akas_in_hand and akas_in_hand[1]
+                else tile_count
+            )
         elif tile_idx == 4 + 18:
             if akas_in_hand and akas_in_hand[2]:
                 ps.append(0)
-            ss += [5] * (tile_count - 1 if akas_in_hand and akas_in_hand[2] else tile_count)
+            ss += [5] * (
+                tile_count - 1
+                if akas_in_hand and akas_in_hand[2]
+                else tile_count
+            )
         elif tile_idx < 9:
             ms += [tile_idx + 1] * tile_count
         elif tile_idx < 18:
@@ -58,10 +72,40 @@ def vec34_index_to_tenhou_tile(index: int) -> str:
         raise ValueError(f"index {index} is out of range [0, 33]")
 
     tiles = [
-        "1m", "2m", "3m", "4m", "5m", "6m", "7m", "8m", "9m",
-        "1p", "2p", "3p", "4p", "5p", "6p", "7p", "8p", "9p",
-        "1s", "2s", "3s", "4s", "5s", "6s", "7s", "8s", "9s",
-        "1z", "2z", "3z", "4z", "5z", "6z", "7z",
+        "1m",
+        "2m",
+        "3m",
+        "4m",
+        "5m",
+        "6m",
+        "7m",
+        "8m",
+        "9m",
+        "1p",
+        "2p",
+        "3p",
+        "4p",
+        "5p",
+        "6p",
+        "7p",
+        "8p",
+        "9p",
+        "1s",
+        "2s",
+        "3s",
+        "4s",
+        "5s",
+        "6s",
+        "7s",
+        "8s",
+        "9s",
+        "1z",
+        "2z",
+        "3z",
+        "4z",
+        "5z",
+        "6z",
+        "7z",
     ]
     return tiles[index]
 
@@ -78,10 +122,40 @@ def vec34_index_to_mjai_tile(index: int) -> str:
         raise ValueError(f"index {index} is out of range [0, 33]")
 
     tiles = [
-        "1m", "2m", "3m", "4m", "5m", "6m", "7m", "8m", "9m",
-        "1p", "2p", "3p", "4p", "5p", "6p", "7p", "8p", "9p",
-        "1s", "2s", "3s", "4s", "5s", "6s", "7s", "8s", "9s",
-        "E", "S", "W", "N", "P", "F", "C",
+        "1m",
+        "2m",
+        "3m",
+        "4m",
+        "5m",
+        "6m",
+        "7m",
+        "8m",
+        "9m",
+        "1p",
+        "2p",
+        "3p",
+        "4p",
+        "5p",
+        "6p",
+        "7p",
+        "8p",
+        "9p",
+        "1s",
+        "2s",
+        "3s",
+        "4s",
+        "5s",
+        "6s",
+        "7s",
+        "8s",
+        "9s",
+        "E",
+        "S",
+        "W",
+        "N",
+        "P",
+        "F",
+        "C",
     ]
     return tiles[index]
 
@@ -244,7 +318,9 @@ class Bot:
             >>> bot.tehai_tenhou
             "012346789m11122z"
         """
-        return convert_tehai_vec34_as_tenhou(self.player_state.tehai, self.player_state.akas_in_hand)
+        return convert_tehai_vec34_as_tenhou(
+            self.player_state.tehai, self.player_state.akas_in_hand
+        )
 
     @property
     def akas_in_hand(self) -> list[bool]:
@@ -269,42 +345,57 @@ class Bot:
         Return a dahai event as a JSON string.
         """
         last_self_tsumo = self.player_state.last_self_tsumo()
-        return json.dumps({
-            "type": "dahai",
-            "pai": tile_str,
-            "actor": self.player_id,
-            "tsumogiri": tile_str == last_self_tsumo,
-        }, separators=(",", ":"))
+        return json.dumps(
+            {
+                "type": "dahai",
+                "pai": tile_str,
+                "actor": self.player_id,
+                "tsumogiri": tile_str == last_self_tsumo,
+            },
+            separators=(",", ":"),
+        )
 
     def action_nothing(self) -> str:
         """
         Return a none event as a JSON string.
         """
-        return json.dumps({
-            "type": "none",
-        }, separators=(",", ":"))
+        return json.dumps(
+            {
+                "type": "none",
+            },
+            separators=(",", ":"),
+        )
 
     def action_tsumo_agari(self) -> str:
-        return json.dumps({
-            "type": "hora",
-            "actor": self.player_id,
-            "target": self.target_actor,
-            "pai": self.last_self_tsumo,
-        }, separators=(",", ":"))
+        return json.dumps(
+            {
+                "type": "hora",
+                "actor": self.player_id,
+                "target": self.target_actor,
+                "pai": self.last_self_tsumo,
+            },
+            separators=(",", ":"),
+        )
 
     def action_ron_agari(self) -> str:
-        return json.dumps({
-            "type": "hora",
-            "actor": self.player_id,
-            "target": self.target_actor,
-            "pai": self.last_kawa_tile,
-        }, separators=(",", ":"))
+        return json.dumps(
+            {
+                "type": "hora",
+                "actor": self.player_id,
+                "target": self.target_actor,
+                "pai": self.last_kawa_tile,
+            },
+            separators=(",", ":"),
+        )
 
     def action_riichi(self) -> str:
-        return json.dumps({
-            "type": "reach",
-            "actor": self.player_id,
-        }, separators=(",", ":"))
+        return json.dumps(
+            {
+                "type": "reach",
+                "actor": self.player_id,
+            },
+            separators=(",", ":"),
+        )
 
     def think(self) -> str:
         """
@@ -325,12 +416,16 @@ class Bot:
             if len(events) == 0:
                 raise ValueError("Empty events")
             for event in events:
-                self.action_candidate = self.player_state.update(json.dumps(event))
+                self.action_candidate = self.player_state.update(
+                    json.dumps(event)
+                )
             resp = self.think()
             return resp
 
         except Exception as e:
-            print("===========================================", file=sys.stderr)
+            print(
+                "===========================================", file=sys.stderr
+            )
             print(f"Exception: {str(e)}", file=sys.stderr)
             print("Brief info:", file=sys.stderr)
             print(self.player_state.brief_info(), file=sys.stderr)
@@ -350,20 +445,37 @@ class Bot:
     def find_improving_tiles(self) -> list[tuple[str, list[str]]]:
         def _aka(tile: str) -> str:
             # Use aka if needeed
-            if tile == '5s' and self.tehai_vec34[4] == 1 and self.akas_in_hand[0]:
-                return '5sr'
-            if tile == '5p' and self.tehai_vec34[4 + 9] == 1 and self.akas_in_hand[1]:
-                return '5pr'
-            if tile == '5p' and self.tehai_vec34[4 + 18] == 1 and self.akas_in_hand[2]:
-                return '5pr'
+            if (
+                tile == "5s"
+                and self.tehai_vec34[4] == 1
+                and self.akas_in_hand[0]
+            ):
+                return "5sr"
+            if (
+                tile == "5p"
+                and self.tehai_vec34[4 + 9] == 1
+                and self.akas_in_hand[1]
+            ):
+                return "5pr"
+            if (
+                tile == "5p"
+                and self.tehai_vec34[4 + 18] == 1
+                and self.akas_in_hand[2]
+            ):
+                return "5pr"
             return tile
 
         candidates = find_improving_tiles(self.tehai_tenhou)
-        candidates = list(sorted(candidates, key=lambda x: len(x[1]), reverse=True))
+        candidates = list(
+            sorted(candidates, key=lambda x: len(x[1]), reverse=True)
+        )
         return [
             (
                 _aka(vec34_index_to_mjai_tile(discard_tile_idx)),
-                [vec34_index_to_mjai_tile(tile_idx) for tile_idx in improving_tile_indices]
+                [
+                    vec34_index_to_mjai_tile(tile_idx)
+                    for tile_idx in improving_tile_indices
+                ],
             )
             for discard_tile_idx, improving_tile_indices in candidates
         ]
@@ -390,7 +502,9 @@ class RiichiBot(Bot):
 
         if self.can_discard:
             candidates = self.find_improving_tiles()
-            candidates = list(sorted(candidates, key=lambda x: len(x[1]), reverse=True))
+            candidates = list(
+                sorted(candidates, key=lambda x: len(x[1]), reverse=True)
+            )
             for discard_tile, improving_tiles in candidates:
                 return self.action_discard(discard_tile)
             return self.action_discard(self.last_self_tsumo)
@@ -411,8 +525,14 @@ PS
 
 def test():
     b = RiichiBot(0)
-    print(b.react("""[{"type":"start_game","names":["0","1","2","3"],"id":0}]"""))
-    print(b.react("""[{"type":"start_kyoku","bakaze":"S","dora_marker":"1p","kyoku":2,"honba":2,"kyotaku":0,"oya":1,"scores":[800,61100,11300,26800],"tehais":[["4p","4s","P","3p","1p","5s","2m","F","1m","7s","9m","6m","9s"],["?","?","?","?","?","?","?","?","?","?","?","?","?"],["?","?","?","?","?","?","?","?","?","?","?","?","?"],["?","?","?","?","?","?","?","?","?","?","?","?","?"]]},{"type":"tsumo","actor":1,"pai":"?"},{"type":"dahai","actor":1,"pai":"F","tsumogiri":false},{"type":"tsumo","actor":2,"pai":"?"},{"type":"dahai","actor":2,"pai":"3m","tsumogiri":true},{"type":"tsumo","actor":3,"pai":"?"},{"type":"dahai","actor":3,"pai":"1m","tsumogiri":true},{"type":"tsumo","actor":0,"pai":"3s"}]"""))
+    print(
+        b.react("""[{"type":"start_game","names":["0","1","2","3"],"id":0}]""")
+    )
+    print(
+        b.react(
+            """[{"type":"start_kyoku","bakaze":"S","dora_marker":"1p","kyoku":2,"honba":2,"kyotaku":0,"oya":1,"scores":[800,61100,11300,26800],"tehais":[["4p","4s","P","3p","1p","5s","2m","F","1m","7s","9m","6m","9s"],["?","?","?","?","?","?","?","?","?","?","?","?","?"],["?","?","?","?","?","?","?","?","?","?","?","?","?"],["?","?","?","?","?","?","?","?","?","?","?","?","?"]]},{"type":"tsumo","actor":1,"pai":"?"},{"type":"dahai","actor":1,"pai":"F","tsumogiri":false},{"type":"tsumo","actor":2,"pai":"?"},{"type":"dahai","actor":2,"pai":"3m","tsumogiri":true},{"type":"tsumo","actor":3,"pai":"?"},{"type":"dahai","actor":3,"pai":"1m","tsumogiri":true},{"type":"tsumo","actor":0,"pai":"3s"}]"""
+        )
+    )
 
     # ps = PlayerState(0)
     # print(ps.update('{"type":"start_game","names":["0","1","2","3"],"id":0}'))

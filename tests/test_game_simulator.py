@@ -5,11 +5,12 @@ import tempfile
 from pathlib import Path
 
 import pytest
-from mjai import MjaiPlayerClient
 from mjai.engine import DockerMjaiLogEngine
 from mjai.exceptions import EngineRuntimeError
 from mjai.game import Simulator
 from mjai.mlibriichi.arena import Match
+
+from mjai import MjaiPlayerClient
 
 
 def test_regular_game():
