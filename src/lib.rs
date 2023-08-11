@@ -20,18 +20,12 @@ pub mod tile;
 pub mod algo;
 pub mod hand;
 
-/// Formats the sum of two numbers as string.
-#[pyfunction]
-fn sum_as_string(a: usize, b: usize) -> PyResult<String> {
-    Ok((a + b).to_string())
-}
+pub mod tools;
 
 /// A Python module implemented in Rust.
 #[pymodule]
-fn mjaisimulator(_py: Python, m: &PyModule) -> PyResult<()> {
+fn mlibriichi(_py: Python, m: &PyModule) -> PyResult<()> {
     pyo3_log::init();
-
-    m.add_function(wrap_pyfunction!(sum_as_string, m)?)?;
 
     let name = m.name()?;
     if cfg!(debug_assertions) {
@@ -45,6 +39,7 @@ fn mjaisimulator(_py: Python, m: &PyModule) -> PyResult<()> {
     consts::register_module(_py, name, m)?;
     state::register_module(_py, name, m)?;
     arena::register_module(_py, name, m)?;
+    tools::register_module(_py, name, m)?;
 
     Ok(())
 }

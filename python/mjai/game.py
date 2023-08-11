@@ -7,10 +7,10 @@ from pathlib import Path
 from typing import Any
 
 from loguru import logger
-from mjaisimulator.engine import DockerMjaiLogEngine
-from mjaisimulator.exceptions import EngineRuntimeError, TimeoutExpired
-from mjaisimulator.mjaisimulator.arena import Match
-from mjaisimulator.player import MjaiPlayerClient
+from mjai.engine import DockerMjaiLogEngine
+from mjai.exceptions import EngineRuntimeError, TimeoutExpired
+from mlibriichi.mlibriichi.arena import Match
+from mjai.player import MjaiPlayerClient
 
 
 def to_rank(scores):

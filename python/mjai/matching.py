@@ -6,8 +6,8 @@ from pathlib import Path
 from typing import Any, TypeAlias
 
 from loguru import logger
-from mjaisimulator import Simulator
-from mjaisimulator.elo import update_multi_players_elo
+from mjai import Simulator
+from mjai.elo import update_multi_players_elo
 
 UserId: TypeAlias = int
 LogId: TypeAlias = str

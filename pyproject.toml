@@ -3,7 +3,7 @@ requires = ["maturin>=1.1,<2.0"]
 build-backend = "maturin"
 
 [project]
-name = "mjaisimulator"
+name = "mjai"
 requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Rust",

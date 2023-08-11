@@ -13,7 +13,7 @@ from pathlib import Path
 
 import requests
 from loguru import logger
-from mjaisimulator.exceptions import EngineRuntimeError, TimeoutExpired
+from mjai.exceptions import EngineRuntimeError, TimeoutExpired
 
 MEMORY_SIZE = "4G"
 CPU_CORES = "4"
