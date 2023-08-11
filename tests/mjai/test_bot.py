@@ -1,6 +1,6 @@
 import json
 
-from mjai.bot import vec34_index_to_mjai_tile, vec34_index_to_tenhou_tile
+from mjai.bot.tools import vec34_index_to_mjai_tile, vec34_index_to_tenhou_tile
 from mjai.mlibriichi.tools import find_improving_tiles  # type: ignore
 
 from mjai import Bot

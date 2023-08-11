@@ -1,163 +1,12 @@
 import json
 import sys
 
+from mjai.bot.tools import (
+    convert_tehai_vec34_as_tenhou,
+    vec34_index_to_mjai_tile,
+)
 from mjai.mlibriichi.state import ActionCandidate, PlayerState  # type: ignore
 from mjai.mlibriichi.tools import find_improving_tiles  # type: ignore
-
-
-def convert_tehai_vec34_as_tenhou(
-    tehai_vec34: list[int], akas_in_hand: list[bool] | None
-) -> str:
-    """
-    Convert tehai_vec34 to tenhou.net/2 format
-
-    TODO: support for called tiles
-    """
-    ms, ps, ss, zis = [], [], [], []
-    shortline_elems = []
-    for tile_idx, tile_count in enumerate(tehai_vec34):
-        if tile_idx == 4:
-            if akas_in_hand and akas_in_hand[0]:
-                ms.append(0)
-            ms += [5] * (
-                tile_count - 1
-                if akas_in_hand and akas_in_hand[0]
-                else tile_count
-            )
-        elif tile_idx == 4 + 9:
-            if akas_in_hand and akas_in_hand[1]:
-                ps.append(0)
-            ps += [5] * (
-                tile_count - 1
-                if akas_in_hand and akas_in_hand[1]
-                else tile_count
-            )
-        elif tile_idx == 4 + 18:
-            if akas_in_hand and akas_in_hand[2]:
-                ps.append(0)
-            ss += [5] * (
-                tile_count - 1
-                if akas_in_hand and akas_in_hand[2]
-                else tile_count
-            )
-        elif tile_idx < 9:
-            ms += [tile_idx + 1] * tile_count
-        elif tile_idx < 18:
-            ps += [tile_idx - 9 + 1] * tile_count
-        elif tile_idx < 27:
-            ss += [tile_idx - 18 + 1] * tile_count
-        else:
-            zis += [tile_idx - 27 + 1] * tile_count
-    if len(ms) > 0:
-        shortline_elems.append("".join(map(str, ms)) + "m")
-    if len(ps) > 0:
-        shortline_elems.append("".join(map(str, ps)) + "p")
-    if len(ss) > 0:
-        shortline_elems.append("".join(map(str, ss)) + "s")
-    if len(zis) > 0:
-        shortline_elems.append("".join(map(str, zis)) + "z")
-
-    return "".join(shortline_elems)
-
-
-def vec34_index_to_tenhou_tile(index: int) -> str:
-    """
-    Example:
-        >>> vec34_index_to_tenhou_tile(0)
-        "1m"
-        >>> vec34_index_to_tenhou_tile(33)
-        "7z"
-    """
-    if index < 0 or index > 33:
-        raise ValueError(f"index {index} is out of range [0, 33]")
-
-    tiles = [
-        "1m",
-        "2m",
-        "3m",
-        "4m",
-        "5m",
-        "6m",
-        "7m",
-        "8m",
-        "9m",
-        "1p",
-        "2p",
-        "3p",
-        "4p",
-        "5p",
-        "6p",
-        "7p",
-        "8p",
-        "9p",
-        "1s",
-        "2s",
-        "3s",
-        "4s",
-        "5s",
-        "6s",
-        "7s",
-        "8s",
-        "9s",
-        "1z",
-        "2z",
-        "3z",
-        "4z",
-        "5z",
-        "6z",
-        "7z",
-    ]
-    return tiles[index]
-
-
-def vec34_index_to_mjai_tile(index: int) -> str:
-    """
-    Example:
-        >>> vec34_index_to_tenhou_tile(0)
-        "1m"
-        >>> vec34_index_to_tenhou_tile(33)
-        "C"
-    """
-    if index < 0 or index > 33:
-        raise ValueError(f"index {index} is out of range [0, 33]")
-
-    tiles = [
-        "1m",
-        "2m",
-        "3m",
-        "4m",
-        "5m",
-        "6m",
-        "7m",
-        "8m",
-        "9m",
-        "1p",
-        "2p",
-        "3p",
-        "4p",
-        "5p",
-        "6p",
-        "7p",
-        "8p",
-        "9p",
-        "1s",
-        "2s",
-        "3s",
-        "4s",
-        "5s",
-        "6s",
-        "7s",
-        "8s",
-        "9s",
-        "E",
-        "S",
-        "W",
-        "N",
-        "P",
-        "F",
-        "C",
-    ]
-    return tiles[index]
 
 
 class Bot:
@@ -165,6 +14,9 @@ class Bot:
         self.player_id = player_id
         self.player_state = PlayerState(player_id)
         self.action_candidate: ActionCandidate | None = None
+
+    # ==========================================================
+    # action_candidate properties
 
     @property
     def can_discard(self) -> bool:
@@ -220,10 +72,23 @@ class Bot:
          'can_act', 'can_kan', 'can_ankan', 'can_pass']
         """
 
+        """
+        PS
+        ['ankan_candidates', 'kakan_candidates',
+        'validate_reaction', 'brief_info',
+        'can_w_riichi', 'last_cans', 'at_furiten',
+        'minkans', 'ankans', 'pons', 'kyotaku',
+        'self_riichi_accepted', 'chis', 'akas_in_hand',
+        'player_id', 'at_turn']
+        """
+
     @property
     def target_actor(self) -> int:
         assert self.action_candidate is not None
         return self.action_candidate.target_actor
+
+    # ==========================================================
+    # player state properties
 
     @property
     def is_oya(self) -> bool:
@@ -342,6 +207,13 @@ class Bot:
         Shanten of the player's hand.
         """
         return self.player_state.shanten
+
+    # ==========================================================
+    # table state properties
+    # TODO: kawa, called tiles, remaining_tiles, etc...
+
+    # ==========================================================
+    # actions
 
     def action_discard(self, tile_str: str) -> str:
         """
@@ -482,45 +354,3 @@ class Bot:
             )
             for discard_tile_idx, improving_tile_indices in candidates
         ]
-
-
-class RulebaseBot(Bot):
-    # RiichiBot + yakuhai pon + {chi,pon} if yaku is ready.
-    # {chi,pon} if tanyao. no call if tenpai.
-    # scoring discard tiles with ukeire, imp candidate and number (19,28,?z)
-    pass
-
-
-class RiichiBot(Bot):
-    def __init__(self, player_id: int = 0):
-        super().__init__(player_id)
-
-    def think(self) -> str:
-        if self.can_tsumo_agari:
-            return self.action_tsumo_agari()
-        elif self.can_ron_agari:
-            return self.action_ron_agari()
-        elif self.can_riichi:
-            return self.action_riichi()
-
-        if self.can_discard:
-            candidates = self.find_improving_tiles()
-            candidates = list(
-                sorted(candidates, key=lambda x: len(x[1]), reverse=True)
-            )
-            for discard_tile, improving_tiles in candidates:
-                return self.action_discard(discard_tile)
-            return self.action_discard(self.last_self_tsumo)
-        else:
-            return self.action_nothing()
-
-
-"""
-PS
-['ankan_candidates', 'kakan_candidates',
- 'validate_reaction', 'brief_info',
- 'can_w_riichi', 'last_cans', 'at_furiten',
- 'minkans', 'ankans', 'pons', 'kyotaku',
- 'self_riichi_accepted', 'chis', 'akas_in_hand',
- 'player_id', 'at_turn']
-"""
