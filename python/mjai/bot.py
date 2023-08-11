@@ -5,25 +5,27 @@ from mlibriichi.mlibriichi.state import PlayerState, ActionCandidate  # type: ig
 from mlibriichi.mlibriichi.tools import find_improving_tiles  # type: ignore
 
 
-def convert_tehai_vec34_as_tenhou(tehai_vec34: list[int], akas_in_hand: list[bool]) -> str:
+def convert_tehai_vec34_as_tenhou(tehai_vec34: list[int], akas_in_hand: list[bool] | None) -> str:
     """
     Convert tehai_vec34 to tenhou.net/2 format
+
+    TODO: support for called tiles
     """
     ms, ps, ss, zis = [], [], [], []
     shortline_elems = []
     for tile_idx, tile_count in enumerate(tehai_vec34):
         if tile_idx == 4:
-            if akas_in_hand[0]:
+            if akas_in_hand and akas_in_hand[0]:
                 ms.append(0)
-            ms += [5] * (tile_count - 1 if akas_in_hand[0] else tile_count)
+            ms += [5] * (tile_count - 1 if akas_in_hand and akas_in_hand[0] else tile_count)
         elif tile_idx == 4 + 9:
-            if akas_in_hand[1]:
+            if akas_in_hand and akas_in_hand[1]:
                 ps.append(0)
-            ps += [5] * (tile_count - 1 if akas_in_hand[1] else tile_count)
+            ps += [5] * (tile_count - 1 if akas_in_hand and akas_in_hand[1] else tile_count)
         elif tile_idx == 4 + 18:
-            if akas_in_hand[2]:
+            if akas_in_hand and akas_in_hand[2]:
                 ps.append(0)
-            ss += [5] * (tile_count - 1 if akas_in_hand[2] else tile_count)
+            ss += [5] * (tile_count - 1 if akas_in_hand and akas_in_hand[2] else tile_count)
         elif tile_idx < 9:
             ms += [tile_idx + 1] * tile_count
         elif tile_idx < 18:
@@ -45,6 +47,13 @@ def convert_tehai_vec34_as_tenhou(tehai_vec34: list[int], akas_in_hand: list[boo
 
 
 def vec34_index_to_tenhou_tile(index: int) -> str:
+    """
+    Example:
+        >>> vec34_index_to_tenhou_tile(0)
+        "1m"
+        >>> vec34_index_to_tenhou_tile(33)
+        "7z"
+    """
     if index < 0 or index > 33:
         raise ValueError(f"index {index} is out of range [0, 33]")
 
@@ -58,6 +67,13 @@ def vec34_index_to_tenhou_tile(index: int) -> str:
 
 
 def vec34_index_to_mjai_tile(index: int) -> str:
+    """
+    Example:
+        >>> vec34_index_to_tenhou_tile(0)
+        "1m"
+        >>> vec34_index_to_tenhou_tile(33)
+        "C"
+    """
     if index < 0 or index > 33:
         raise ValueError(f"index {index} is out of range [0, 33]")
 
@@ -119,11 +135,15 @@ class Bot:
         assert self.action_candidate is not None
         return self.action_candidate.can_ron_agari
 
+    @property
+    def can_ryukyoku(self) -> bool:
+        assert self.action_candidate is not None
+        return self.action_candidate.can_ryukyoku
+
         """
         AC
         ['can_chi_mid', 'can_chi_low', 'can_chi', 'can_chi_high',
-        'can_ryukyoku',
-        'can_act', 'can_kan', 'can_ankan', 'can_pass']
+         'can_act', 'can_kan', 'can_ankan', 'can_pass']
         """
 
     @property
@@ -161,6 +181,10 @@ class Bot:
     @property
     def last_kawa_tile(self) -> str:
         return self.player_state.last_kawa_tile()
+
+    @property
+    def self_riichi_declared(self) -> bool:
+        return self.player_state.self_riichi_declared
 
     @property
     def tehai_vec34(self) -> list[int]:
@@ -220,7 +244,7 @@ class Bot:
             >>> bot.tehai_tenhou
             "012346789m11122z"
         """
-        return convert_tehai_vec34_as_tenhou(self.player_state.tehai, self.akas_in_hand)
+        return convert_tehai_vec34_as_tenhou(self.player_state.tehai, self.player_state.akas_in_hand)
 
     @property
     def akas_in_hand(self) -> list[bool]:
@@ -276,6 +300,12 @@ class Bot:
             "pai": self.last_kawa_tile,
         }, separators=(",", ":"))
 
+    def action_riichi(self) -> str:
+        return json.dumps({
+            "type": "reach",
+            "actor": self.player_id,
+        }, separators=(",", ":"))
+
     def think(self) -> str:
         """
         Logic part of the bot.
@@ -319,6 +349,12 @@ class Bot:
 
 
 class RiichiBot(Bot):
+    """
+    * 立直する
+    * ロンあがりする
+    * 受け入れ最大となる牌を切る
+
+    """
     def __init__(self, player_id: int = 0):
         super().__init__(player_id)
 
@@ -328,17 +364,28 @@ class RiichiBot(Bot):
         elif self.can_ron_agari:
             return self.action_ron_agari()
         elif self.self_riichi_declared:
-            # TODO: 受け入れ最大を選択
-            pass
+            # Dahai action just after riichi declaration
+            # 受け入れ最大となる牌を切る
+            candidates = find_improving_tiles(self.tehai_tenhou)
+            candidates = list(sorted(candidates, key=lambda x: len(x[1]), reverse=True))
+            for candidate in candidates:
+                return self.action_discard(vec34_index_to_mjai_tile(candidate[0]))
+
+            # 候補がない場合は最後にツモった牌を切る
+            tile_str = self.last_self_tsumo
+            return self.action_discard(tile_str)
         elif self.can_riichi:
             return self.action_riichi()
 
-        # TODO: 流局を選択する
         # TODO: ポン、チー、カンする
 
         if self.can_discard:
-            # TODO: 打牌選択
-            # TODO: 牌効率の高い選択をする：受け入れ枚数の最大化
+            # 受け入れ最大となる牌を切る
+            candidates = find_improving_tiles(self.tehai_tenhou)
+            candidates = list(sorted(candidates, key=lambda x: len(x[1]), reverse=True))
+            for candidate in candidates:
+                return self.action_discard(vec34_index_to_mjai_tile(candidate[0]))
+
             tile_str = self.last_self_tsumo
             return self.action_discard(tile_str)
         else:
@@ -349,7 +396,7 @@ class RiichiBot(Bot):
 PS
 ['ankan_candidates', 'kakan_candidates',
  'validate_reaction', 'brief_info',
- 'self_riichi_declared', 'can_w_riichi', 'last_cans', 'at_furiten',
+ 'can_w_riichi', 'last_cans', 'at_furiten',
  'minkans', 'ankans', 'pons', 'kyotaku',
  'self_riichi_accepted', 'chis', 'akas_in_hand',
  'player_id', 'at_turn']
