@@ -153,13 +153,14 @@ class Bot:
         return self.player_state.is_oya
 
     @property
-    def last_self_tsumo(self) -> str | None:
+    def last_self_tsumo(self) -> str:
         """
         Last tile that the player drew by itself.
 
-        Mjai-style tile string (like '5mr' or 'P')
+        Tile format is mjai-style like '5mr' or 'P'.
+        Return a empty string when the player's first action is not tsumo.
         """
-        return self.player_state.last_self_tsumo()
+        return self.player_state.last_self_tsumo() or ""
 
     @property
     def last_kawa_tile(self) -> str:

@@ -5,15 +5,6 @@ from mjai import Bot
 
 class RulebaseBot(Bot):
     def think(self) -> str:
-        print(
-            self.tehai_tenhou,
-            self.can_chi,
-            self.can_chi_high,
-            self.can_chi_low,
-            self.can_chi_mid,
-            self.last_kawa_tile,
-            self.last_self_tsumo,
-        )
         if self.can_tsumo_agari:
             return self.action_tsumo_agari()
         elif self.can_ron_agari:
