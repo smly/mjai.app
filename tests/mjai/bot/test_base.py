@@ -64,17 +64,17 @@ def test_find_improving_tiles():
 
 
 def test_tsumogiri_bot():
-    player = Bot(player_id=0)
+    bot = Bot(player_id=0)
     assert (
-        player.react(
+        bot.react(
             """[{"type":"start_game","names":["0","1","2","3"],"id":0}]"""
         )
         == '{"type":"none"}'
     )
-    assert player.tehai_tenhou == ""
+    assert bot.tehai_tenhou == ""
 
     assert (
-        player.react(
+        bot.react(
             """
             [{"type":"start_kyoku","bakaze":"S","dora_marker":"1p","kyoku":2,
             "honba":2,"kyotaku":0,"oya":1,"scores":[800,61100,11300,26800],
@@ -95,14 +95,30 @@ def test_tsumogiri_bot():
         )
         == '{"type":"dahai","pai":"3s","actor":0,"tsumogiri":true}'
     )
-    assert len(player.tehai_mjai) == 14
-    assert player.tehai_tenhou == "1269m134p34579s56z"
-    assert player.is_oya is False
-    assert player.last_self_tsumo == "3s"
-    assert player.can_discard is True
-    assert player.honba == 2
-    assert player.kyoku == 2
-    assert player.last_kawa_tile == "1m"
+    assert len(bot.tehai_mjai) == 14
+    assert bot.tehai_tenhou == "1269m134p34579s56z"
+    assert bot.is_oya is False
+    assert bot.last_self_tsumo == "3s"
+    assert bot.can_discard is True
+    assert bot.honba == 2
+    assert bot.kyoku == 2
+    assert bot.last_kawa_tile == "1m"
+
+    assert bot.scores == [800, 61100, 11300, 26800]
+    assert bot.jikaze == "N"
+    assert bot.bakaze == "S"
+
+    assert len(bot.tiles_seen) == 34
+    assert len(bot.forbidden_tiles) == 34
+    assert bot.tiles_seen["F"] == 2
+    assert bot.tiles_seen["1p"] == 2
+    assert (
+        bot.discarded_tiles(0) == []
+    )  # NOTE: state just before last own reaction
+
+    assert bot.get_call_events(0) == []
+    assert len(bot.dora_indicators) == 1
+    assert bot.dora_indicators[0] == "1p"
 
 
 class MyBot(Bot):

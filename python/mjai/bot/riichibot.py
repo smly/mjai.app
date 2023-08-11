@@ -4,9 +4,6 @@ from mjai import Bot
 
 
 class RiichiBot(Bot):
-    def __init__(self, player_id: int = 0):
-        super().__init__(player_id)
-
     def think(self) -> str:
         if self.can_tsumo_agari:
             return self.action_tsumo_agari()

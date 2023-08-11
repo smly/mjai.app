@@ -1,6 +1,7 @@
 import json
 import sys
 
+from mjai.bot.consts import MJAI_VEC34_TILES
 from mjai.bot.tools import (
     convert_tehai_vec34_as_tenhou,
     vec34_index_to_mjai_tile,
@@ -14,6 +15,9 @@ class Bot:
         self.player_id = player_id
         self.player_state = PlayerState(player_id)
         self.action_candidate: ActionCandidate | None = None
+        self.__discard_events: list[dict] = []
+        self.__call_events: list[dict] = []
+        self.__dora_indicators: list[str] = []
 
     # ==========================================================
     # action_candidate properties
@@ -135,22 +139,6 @@ class Bot:
         return self.player_state.is_oya
 
     @property
-    def honba(self) -> int:
-        return self.player_state.honba
-
-    @property
-    def kyoku(self) -> int:
-        """
-        Current kyoku as 1-indexed number.
-        East 1 is 1, East 2 is 2, ..., South 4 is 4.
-
-        Example:
-            >>> bot.kyoku
-            2
-        """
-        return self.player_state.kyoku + 1
-
-    @property
     def last_self_tsumo(self) -> str:
         """
         Last tile that the player drew by itself.
@@ -251,8 +239,71 @@ class Bot:
         return self.player_state.shanten - 1
 
     # ==========================================================
-    # table state properties
-    # TODO: kawa, called tiles, remaining_tiles, etc...
+    # table state
+
+    @property
+    def dora_indicators(self) -> list[str]:
+        return self.__dora_indicators
+
+    def discarded_tiles(self, player_id: int | None = None) -> list[str]:
+        if player_id is not None:
+            return [
+                ev["pai"]
+                for ev in self.__discard_events
+                if ev["actor"] == player_id
+            ]
+        return [ev["pai"] for ev in self.__discard_events]
+
+    def get_call_events(self, player_id: int | None = None) -> list[dict]:
+        if player_id is not None:
+            return [
+                ev for ev in self.__call_events if ev["actor"] == player_id
+            ]
+        return self.__call_events
+
+    @property
+    def honba(self) -> int:
+        return self.player_state.honba
+
+    @property
+    def kyoku(self) -> int:
+        """
+        Current kyoku as 1-indexed number.
+        East 1 is 1, East 2 is 2, ..., South 4 is 4.
+
+        Example:
+            >>> bot.kyoku
+            2
+        """
+        return self.player_state.kyoku + 1
+
+    @property
+    def scores(self) -> list[int]:
+        return self.player_state.scores
+
+    @property
+    def jikaze(self) -> str:
+        chars = ["E", "S", "W", "N"]
+        assert self.player_state.jikaze >= 27 and self.player_state.jikaze < 31
+        return chars[self.player_state.jikaze - 27]
+
+    @property
+    def bakaze(self) -> str:
+        chars = ["E", "S", "W", "N"]
+        assert self.player_state.bakaze >= 27 and self.player_state.bakaze < 31
+        return chars[self.player_state.bakaze - 27]
+
+    @property
+    def tiles_seen(self) -> dict[str, int]:
+        assert self.player_state.tiles_seen is not None
+        assert len(self.player_state.tiles_seen) == len(MJAI_VEC34_TILES)
+        return dict(zip(MJAI_VEC34_TILES, self.player_state.tiles_seen))
+
+    @property
+    def forbidden_tiles(self) -> dict[str, bool]:
+        assert self.player_state.forbidden_tiles is not None
+        assert len(self.player_state.forbidden_tiles) == len(MJAI_VEC34_TILES)
+        return dict(zip(MJAI_VEC34_TILES, self.player_state.forbidden_tiles))
 
     # ==========================================================
     # actions
@@ -314,6 +365,29 @@ class Bot:
             separators=(",", ":"),
         )
 
+    def action_pon(self) -> str:
+        return json.dumps(
+            {
+                "type": "pon",
+                "actor": self.player_id,
+                "target": self.target_actor,
+                "pai": self.last_kawa_tile,
+            },
+            separators=(",", ":"),
+        )
+
+    def action_chi(self, consumed: list[str]) -> str:
+        return json.dumps(
+            {
+                "type": "chi",
+                "actor": self.player_id,
+                "target": self.target_actor,
+                "pai": self.last_kawa_tile,
+                "consumed": consumed,
+            },
+            separators=(",", ":"),
+        )
+
     def think(self) -> str:
         """
         Logic part of the bot.
@@ -333,9 +407,27 @@ class Bot:
             if len(events) == 0:
                 raise ValueError("Empty events")
             for event in events:
+                if event["type"] == "start_game":
+                    self.__discard_events = []
+                    self.__call_events = []
+                    self.__dora_indicators = []
+                if event["type"] == "start_kyoku" or event["type"] == "dora":
+                    self.__dora_indicators.append(event["dora_marker"])
+                if event["type"] == "dahai":
+                    self.__discard_events.append(event)
+                if event["type"] in [
+                    "chi",
+                    "pon",
+                    "daiminkan",
+                    "kakan",
+                    "ankan",
+                ]:
+                    self.__call_events.append(event)
+
                 self.action_candidate = self.player_state.update(
                     json.dumps(event)
                 )
+
             resp = self.think()
             return resp
 
@@ -386,7 +478,6 @@ class Bot:
                 "P",
                 "F",
             ]
-
         """
 
         def _aka(tile: str) -> str:
