@@ -4,6 +4,7 @@ import sys
 from mjai.bot.consts import MJAI_VEC34_TILES
 from mjai.bot.tools import (
     convert_tehai_vec34_as_tenhou,
+    fmt_tenhou_call,
     vec34_index_to_mjai_tile,
 )
 from mjai.mlibriichi.state import ActionCandidate, PlayerState  # type: ignore
@@ -115,6 +116,15 @@ class Bot:
         assert self.action_candidate is not None
         return self.action_candidate.target_actor
 
+    @property
+    def target_actor_rel(self) -> int:
+        """
+        Relative position of target actor.
+
+        0 = shimocha, 2 = toimen, 3 = kamicha.
+        """
+        return (self.target_actor - self.player_id + 4) % 4
+
     # ==========================================================
     # player state properties
 
@@ -124,29 +134,40 @@ class Bot:
         """
         return self.player_state.validate_reaction(reaction)
 
-    """
-    PS
-    ['ankan_candidates', 'kakan_candidates',
-    'validate_reaction', 'brief_info',
-    'can_w_riichi', 'last_cans', 'at_furiten',
-    'minkans', 'ankans', 'pons', 'kyotaku',
-    'self_riichi_accepted', 'chis', 'akas_in_hand',
-    'player_id', 'at_turn']
-    """
+    def brief_info(self) -> None:
+        """
+        Print brief information about the player state.
+        """
+        self.player_state.brief_info()
+
+    @property
+    def kyotaku(self) -> int:
+        return self.player_state.kyotaku
+
+    @property
+    def at_furiten(self) -> bool:
+        return self.player_state.at_furiten
 
     @property
     def is_oya(self) -> bool:
         return self.player_state.is_oya
 
     @property
-    def last_self_tsumo(self) -> str:
+    def last_self_tsumo(self) -> str | None:
         """
         Last tile that the player drew by itself.
+
+        Mjai-style tile string (like '5mr' or 'P')
         """
         return self.player_state.last_self_tsumo()
 
     @property
     def last_kawa_tile(self) -> str:
+        """
+        Last discarded tile in the game.
+
+        Mjai-style tile string (like '5mr' or 'P')
+        """
         return self.player_state.last_kawa_tile()
 
     @property
@@ -203,9 +224,26 @@ class Bot:
     @property
     def tehai_tenhou(self) -> str:
         """
-        Player's hand with tenhou.net/2 format (like 123m0456p789s111z)
+        Player's hand in the riichi-tools-rs format (like 123m0456p789s111z)
 
-        TODO: handling called tiles
+        ## Open shape
+
+        * (pXCIr) is pon, where X is 0-9, C is the color (m, p, s, z) and
+          I is the index of the player from who we called
+          (1 = shimocha, 2 = toimen, 3 = kamicha).
+          In case the pon has a red 5, the representation will use 0
+          - for example (p0m2). If it was the red 5 that was called, r is added
+        * (XYZCI) is chi, where XYZ are consecutive numbers,
+          C is the color (m, p, s) and I is the index of the called tile (0-2).
+        * (kXCIr) is closed kan or daiminkan (open called kan).
+          Same rules as pon apply, but I is optional
+          - if not available, the kan is considered closed.
+        * (sXCIr) is a shouminkan (added kan).
+          Same rules as daiminkan above.
+
+        ref: https://github.com/harphield/riichi-tools-rs#hand-representation-parsing  # noqa
+
+        TODO: ankan, kakan, daiminkan をサポートする
 
         Example:
             >>> bot.tehai_tenhou
@@ -213,10 +251,20 @@ class Bot:
 
             >>> bot.tehai_tenhou
             "012346789m11122z"
+
+            >>> bot.tehai_tenhou
+            "123m134p4567s6z(p5z3)"
         """
-        return convert_tehai_vec34_as_tenhou(
+        tehai_str = convert_tehai_vec34_as_tenhou(
             self.player_state.tehai, self.player_state.akas_in_hand
         )
+        events = self.get_call_events(self.player_id)
+
+        if len(events) > 0:
+            for ev in events:
+                tehai_str += fmt_tenhou_call(ev, self.player_id)
+
+        return tehai_str
 
     @property
     def akas_in_hand(self) -> list[bool]:
@@ -365,13 +413,14 @@ class Bot:
             separators=(",", ":"),
         )
 
-    def action_pon(self) -> str:
+    def action_pon(self, consumed: list[str]) -> str:
         return json.dumps(
             {
                 "type": "pon",
                 "actor": self.player_id,
                 "target": self.target_actor,
                 "pai": self.last_kawa_tile,
+                "consumed": consumed,
             },
             separators=(",", ":"),
         )
@@ -437,7 +486,7 @@ class Bot:
             )
             print(f"Exception: {str(e)}", file=sys.stderr)
             print("Brief info:", file=sys.stderr)
-            print(self.player_state.brief_info(), file=sys.stderr)
+            print(self.brief_info(), file=sys.stderr)
             print("", file=sys.stderr)
 
         return json.dumps({"type": "none"}, separators=(",", ":"))
@@ -450,6 +499,15 @@ class Bot:
             resp = self.react(line)
             sys.stdout.write(resp + "\n")
             sys.stdout.flush()
+
+    # ==========================================================
+    # utils
+
+    def is_yakuhai(self, tile: str) -> bool:
+        return tile in [self.jikaze, self.bakaze] or self.is_dragon(tile)
+
+    def is_dragon(self, tile: str) -> bool:
+        return tile in ["P", "F", "C"]
 
     def find_improving_tiles(self) -> list[tuple[str, list[str]]]:
         """

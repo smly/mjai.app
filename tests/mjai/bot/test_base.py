@@ -77,7 +77,7 @@ def test_tsumogiri_bot():
         bot.react(
             """
             [{"type":"start_kyoku","bakaze":"S","dora_marker":"1p","kyoku":2,
-            "honba":2,"kyotaku":0,"oya":1,"scores":[800,61100,11300,26800],
+            "honba":2,"kyotaku":1,"oya":1,"scores":[800,61100,11300,26800],
             "tehais":
             [["4p","4s","P","3p","1p","5s","2m","F","1m","7s","9m","6m","9s"],
             ["?","?","?","?","?","?","?","?","?","?","?","?","?"],
@@ -96,18 +96,21 @@ def test_tsumogiri_bot():
         == '{"type":"dahai","pai":"3s","actor":0,"tsumogiri":true}'
     )
     assert len(bot.tehai_mjai) == 14
-    assert bot.tehai_tenhou == "1269m134p34579s56z"
+    assert (
+        bot.tehai_tenhou == "1269m134p34579s56z"
+    )  # NOTE: state just before last own reaction
     assert bot.is_oya is False
     assert bot.last_self_tsumo == "3s"
     assert bot.can_discard is True
     assert bot.honba == 2
     assert bot.kyoku == 2
+    assert bot.kyotaku == 1
     assert bot.last_kawa_tile == "1m"
 
     assert bot.scores == [800, 61100, 11300, 26800]
     assert bot.jikaze == "N"
     assert bot.bakaze == "S"
-
+    assert bot.player_state.at_furiten is False
     assert len(bot.tiles_seen) == 34
     assert len(bot.forbidden_tiles) == 34
     assert bot.tiles_seen["F"] == 2
@@ -155,10 +158,12 @@ def test_custom_bot():
             {"type":"dahai","actor":2,"pai":"3m","tsumogiri":true},
             {"type":"tsumo","actor":3,"pai":"?"},
             {"type":"dahai","actor":3,"pai":"1m","tsumogiri":true},
-            {"type":"tsumo","actor":0,"pai":"3s"}]""".replace(
+            {"type":"tsumo","actor":0,"pai":"P"}]""".replace(
                 "\n", ""
             ).strip()
         )
         == '{"type":"none"}'
     )
-    assert player.tehai_tenhou == "1269m134p34579s56z"
+    assert player.last_kawa_tile == "1m"
+    assert player.last_self_tsumo == "P"
+    assert player.tehai_tenhou == "1269m134p4579s556z"
