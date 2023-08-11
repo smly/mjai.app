@@ -352,6 +352,35 @@ class Bot:
             sys.stdout.flush()
 
     def find_improving_tiles(self) -> list[tuple[str, list[str]]]:
+        """
+        Find tiles that improve the hand.
+
+        Example:
+            >>> bot.tehai_tenhou
+            1269m134p34579s56z
+
+            >>> ret = bot.find_improving_tiles()
+            >>> len(ret)
+            6
+
+            >>> discard_tile, improving_tiles = ret[0]
+            >>> discard_tile
+            6m
+            >>> improving_tiles
+            [
+                "3m",
+                "9m",
+                "1p",
+                "2p",
+                "4p",
+                "5p",
+                "8s",
+                "P",
+                "F",
+            ]
+
+        """
+
         def _aka(tile: str) -> str:
             # Use aka if needeed
             if (

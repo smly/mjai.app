@@ -1,3 +1,6 @@
+from mjai.mlibriichi.tools import find_improving_tiles  # noqa, type: ignore
+
+
 def convert_tehai_vec34_as_tenhou(
     tehai_vec34: list[int], akas_in_hand: list[bool] | None = None
 ) -> str:

@@ -1,6 +1,7 @@
 import pytest
 from mjai.bot.tools import (
     convert_tehai_vec34_as_tenhou,
+    find_improving_tiles,
     vec34_index_to_mjai_tile,
     vec34_index_to_tenhou_tile,
 )
@@ -21,6 +22,34 @@ def tehai_vec34_ryanpeikou_chanta() -> list[int]:
     # ref: https://riichi.wiki/Chanta
     vec34_str = "222000000 222000000 000000000 0000002"
     return list(map(int, list(vec34_str.replace(" ", ""))))
+
+
+def test_find_improving_tiles(tehai_vec34_random):
+    ret = find_improving_tiles("1269m134p34579s56z")
+    assert len(ret) == 6
+
+    # discard tiles
+    assert vec34_index_to_tenhou_tile(ret[0][0]) == "6m"
+    assert vec34_index_to_tenhou_tile(ret[1][0]) == "9m"
+    assert vec34_index_to_tenhou_tile(ret[2][0]) == "1p"
+    assert vec34_index_to_tenhou_tile(ret[3][0]) == "4p"
+    assert vec34_index_to_tenhou_tile(ret[4][0]) == "5z"
+    assert vec34_index_to_tenhou_tile(ret[5][0]) == "6z"
+    assert vec34_index_to_mjai_tile(ret[3][0]) == "4p"
+    assert vec34_index_to_mjai_tile(ret[4][0]) == "P"
+    assert vec34_index_to_mjai_tile(ret[5][0]) == "F"
+    assert ret[0][1] == [2, 8, 9, 10, 12, 13, 25, 31, 32]
+    assert [vec34_index_to_mjai_tile(x) for x in ret[0][1]] == [
+        "3m",
+        "9m",
+        "1p",
+        "2p",
+        "4p",
+        "5p",
+        "8s",
+        "P",
+        "F",
+    ]
 
 
 def test_convert_tehai_vec34_as_tenhou(

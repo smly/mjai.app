@@ -1,17 +1,6 @@
 import json
 
-from mjai.bot.tools import vec34_index_to_mjai_tile, vec34_index_to_tenhou_tile
-from mjai.mlibriichi.tools import find_improving_tiles  # type: ignore
-
 from mjai import Bot
-
-
-class MyBot(Bot):
-    def __init__(self, player_id: int = 0):
-        super().__init__(player_id)
-
-    def think(self) -> str:
-        return self.action_nothing()
 
 
 def test_find_improving_tiles():
@@ -73,18 +62,6 @@ def test_find_improving_tiles():
     )
     assert len(player.tehai_mjai) == 14
 
-    ret = find_improving_tiles(player.tehai_tenhou)
-    assert len(ret) == 6
-    assert vec34_index_to_tenhou_tile(ret[0][0]) == "6m"
-    assert vec34_index_to_tenhou_tile(ret[1][0]) == "9m"
-    assert vec34_index_to_tenhou_tile(ret[2][0]) == "1p"
-    assert vec34_index_to_tenhou_tile(ret[3][0]) == "4p"
-    assert vec34_index_to_tenhou_tile(ret[4][0]) == "5z"
-    assert vec34_index_to_tenhou_tile(ret[5][0]) == "6z"
-    assert vec34_index_to_mjai_tile(ret[3][0]) == "4p"
-    assert vec34_index_to_mjai_tile(ret[4][0]) == "P"
-    assert vec34_index_to_mjai_tile(ret[5][0]) == "F"
-
 
 def test_tsumogiri_bot():
     player = Bot(player_id=0)
@@ -128,6 +105,14 @@ def test_tsumogiri_bot():
     assert player.last_kawa_tile == "1m"
 
 
+class MyBot(Bot):
+    def __init__(self, player_id: int = 0):
+        super().__init__(player_id)
+
+    def think(self) -> str:
+        return self.action_nothing()
+
+
 def test_custom_bot():
     player = MyBot(player_id=0)
     assert (
@@ -136,6 +121,8 @@ def test_custom_bot():
         )
         == '{"type":"none"}'
     )
+    assert player.tehai_tenhou == ""
+
     assert (
         player.react(
             """
@@ -158,3 +145,4 @@ def test_custom_bot():
         )
         == '{"type":"none"}'
     )
+    assert player.tehai_tenhou == "1269m134p34579s56z"
