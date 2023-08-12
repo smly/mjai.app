@@ -491,9 +491,7 @@ class Bot:
 
         return json.dumps({"type": "none"}, separators=(",", ":"))
 
-    def start(self, player_id: int) -> None:
-        self.player_id = player_id
-
+    def start(self) -> None:
         while True:
             line = sys.stdin.readline().strip()
             resp = self.react(line)

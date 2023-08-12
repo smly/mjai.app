@@ -105,6 +105,7 @@ class MjaiPlayerClient:
             "/workspace/00__server__.py",
             f"{player_id}",
         ]
+        logger.info("cmd: " + " ".join(command))
         proc = subprocess.Popen(
             command,
             bufsize=0,

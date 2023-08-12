@@ -22,8 +22,8 @@ RUN curl https://pyenv.run | bash && \
     echo 'eval "$(pyenv init --path)"' >> /workspace/.bashrc && \
     echo 'eval "$(pyenv virtualenv-init -)"' >> /workspace/.bashrc
 RUN . /workspace/.bashrc && \
-    PYTHON_CONFIGURE_OPTS="--enable-shared" pyenv install 3.10.5 && \
-    pyenv global 3.10.5 && \
+    PYTHON_CONFIGURE_OPTS="--enable-shared" pyenv install 3.10.12 && \
+    pyenv global 3.10.12 && \
     pip install -U pip
 
 RUN apt -y install wget unzip libboost-all-dev cmake
@@ -44,6 +44,17 @@ RUN adduser --disabled-password --gecos "" --home /workspace ubuntu &&\
     chown ubuntu:ubuntu /workspace
 USER ubuntu
 
+ENV HOME /workspace
+ENV RUST_HOME ${HOME}/.local/lib/rust
+ENV RUSTUP_HOME ${RUST_HOME}/rustup
+ENV CARGO_HOME ${RUST_HOME}/cargo
+RUN mkdir -p ${RUST_HOME} && \
+    chmod 0755 $RUST_HOME
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > ${RUST_HOME}/rustup.sh \
+    && chmod +x ${RUST_HOME}/rustup.sh \
+    && ${RUST_HOME}/rustup.sh -y --default-toolchain nightly --no-modify-path
+ENV PATH $PATH:$CARGO_HOME/bin
+
 COPY requirements.txt /workspace/
 RUN . /workspace/.bashrc && python -m pip install -r requirements.txt
-RUN . /workspace/.bashrc && python -m pip install git+https://github.com/smly/mjai.app.git
+RUN . /workspace/.bashrc && python -m pip install git+https://github.com/smly/mjai.app.git@refactoring
