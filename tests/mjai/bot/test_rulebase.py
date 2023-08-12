@@ -81,3 +81,157 @@ def test_custom_bot():
         == '{"type":"dahai","pai":"1p","actor":0,"tsumogiri":false}'
     )
     assert player.tehai_tenhou == "129m1p4567s(p5z3)(234p0)"
+
+
+def test_error_case():
+    bot = RulebaseBot(player_id=1)
+
+    assert (
+        bot.react(
+            """[{"type":"start_game","names":["0","1","2","3"],"id":0}]"""
+        )
+        == '{"type":"none"}'
+    )
+
+    assert (
+        bot.react(
+            fmt(
+                """
+[{"type":"start_kyoku","bakaze":"E","dora_marker":"6s","kyoku":2,"honba":1,"kyotaku":0,"oya":1,"scores":[13000,45000,21000,21000],"tehais":[["?","?","?","?","?","?","?","?","?","?","?","?","?"],["2m","2p","7s","8p","F","1p","3m","7p","N","5mr","E","5s","W"],["?","?","?","?","?","?","?","?","?","?","?","?","?"],["?","?","?","?","?","?","?","?","?","?","?","?","?"]]},{"type":"tsumo","actor":1,"pai":"2m"}]
+        """
+            )
+        )
+        == '{"type":"dahai","pai":"E","actor":1,"tsumogiri":false}'
+    )
+
+    assert (
+        bot.react(
+            fmt(
+                """
+[{"type":"dahai","actor":1,"pai":"E","tsumogiri":false},{"type":"tsumo","actor":2,"pai":"?"},{"type":"dahai","actor":2,"pai":"E","tsumogiri":true},{"type":"tsumo","actor":3,"pai":"?"},{"type":"dahai","actor":3,"pai":"S","tsumogiri":true},{"type":"tsumo","actor":0,"pai":"?"},{"type":"dahai","actor":0,"pai":"1s","tsumogiri":false},{"type":"tsumo","actor":1,"pai":"3s"}]
+        """
+            )
+        )
+        == '{"type":"dahai","pai":"W","actor":1,"tsumogiri":false}'
+    )
+
+    assert (
+        bot.react(
+            fmt(
+                """
+[{"type":"dahai","actor":1,"pai":"W","tsumogiri":false},{"type":"tsumo","actor":2,"pai":"?"},{"type":"dahai","actor":2,"pai":"9m","tsumogiri":true},{"type":"tsumo","actor":3,"pai":"?"},{"type":"dahai","actor":3,"pai":"5p","tsumogiri":true},{"type":"tsumo","actor":0,"pai":"?"},{"type":"dahai","actor":0,"pai":"3p","tsumogiri":false}]
+        """
+            )
+        )
+        == '{"type":"none"}'
+    )
+
+    assert (
+        bot.react(
+            fmt(
+                """
+[{"type":"tsumo","actor":1,"pai":"9s"}]
+"""
+            )
+        )
+        == '{"type":"dahai","pai":"N","actor":1,"tsumogiri":false}'
+    )
+
+    assert (
+        bot.react(
+            fmt(
+                """
+[{"type":"dahai","actor":1,"pai":"N","tsumogiri":false},{"type":"tsumo","actor":2,"pai":"?"},{"type":"dahai","actor":2,"pai":"2p","tsumogiri":true},{"type":"tsumo","actor":3,"pai":"?"},{"type":"dahai","actor":3,"pai":"4m","tsumogiri":true},{"type":"tsumo","actor":0,"pai":"?"},{"type":"dahai","actor":0,"pai":"6m","tsumogiri":false},{"type":"tsumo","actor":1,"pai":"1m"}]
+"""
+            )
+        )
+        == '{"type":"dahai","pai":"F","actor":1,"tsumogiri":false}'
+    )
+
+    assert (
+        bot.react(
+            fmt(
+                """
+[{"type":"dahai","actor":1,"pai":"F","tsumogiri":false},{"type":"tsumo","actor":2,"pai":"?"},{"type":"dahai","actor":2,"pai":"F","tsumogiri":true},{"type":"tsumo","actor":3,"pai":"?"},{"type":"dahai","actor":3,"pai":"2m","tsumogiri":true}]
+"""
+            )
+        )
+        == '{"type":"none"}'
+    )
+
+    assert (
+        bot.react(
+            fmt(
+                """
+[{"type":"tsumo","actor":0,"pai":"?"},{"type":"dahai","actor":0,"pai":"7m","tsumogiri":true},{"type":"tsumo","actor":1,"pai":"6m"}]
+"""
+            )
+        )
+        == '{"type":"dahai","pai":"2m","actor":1,"tsumogiri":false}'
+    )
+
+    assert (
+        bot.react(
+            fmt(
+                """
+[{"type":"dahai","actor":1,"pai":"2m","tsumogiri":false},{"type":"tsumo","actor":2,"pai":"?"},{"type":"dahai","actor":2,"pai":"5pr","tsumogiri":true},{"type":"tsumo","actor":3,"pai":"?"},{"type":"dahai","actor":3,"pai":"6m","tsumogiri":true},{"type":"tsumo","actor":0,"pai":"?"},{"type":"dahai","actor":0,"pai":"8s","tsumogiri":true}]
+"""
+            )
+        )
+        == '{"type":"none"}'
+    )
+
+    assert (
+        bot.react(
+            fmt(
+                """
+[{"type":"tsumo","actor":1,"pai":"8m"}]
+"""
+            )
+        )
+        == '{"type":"dahai","pai":"8m","actor":1,"tsumogiri":true}'
+    )
+
+    assert (
+        bot.react(
+            fmt(
+                """
+[{"type":"dahai","actor":1,"pai":"8m","tsumogiri":true},{"type":"tsumo","actor":2,"pai":"?"},{"type":"dahai","actor":2,"pai":"6m","tsumogiri":true},{"type":"tsumo","actor":3,"pai":"?"},{"type":"dahai","actor":3,"pai":"7s","tsumogiri":true},{"type":"tsumo","actor":0,"pai":"?"},{"type":"dahai","actor":0,"pai":"E","tsumogiri":false},{"type":"tsumo","actor":1,"pai":"9s"}]
+"""
+            )
+        )
+        == '{"type":"dahai","pai":"1p","actor":1,"tsumogiri":false}'
+    )
+
+    assert (
+        bot.react(
+            fmt(
+                """
+[{"type":"dahai","actor":1,"pai":"1p","tsumogiri":false},{"type":"tsumo","actor":2,"pai":"?"},{"type":"dahai","actor":2,"pai":"P","tsumogiri":true},{"type":"tsumo","actor":3,"pai":"?"},{"type":"dahai","actor":3,"pai":"3p","tsumogiri":true},{"type":"tsumo","actor":0,"pai":"?"},{"type":"dahai","actor":0,"pai":"4m","tsumogiri":true}]
+"""
+            )
+        )
+        == '{"type":"none"}'
+    )
+
+    assert (
+        bot.react(
+            fmt(
+                """
+[{"type":"tsumo","actor":1,"pai":"2s"}]
+"""
+            )
+        )
+        == '{"type":"dahai","pai":"2p","actor":1,"tsumogiri":false}'
+    )
+
+    assert (
+        bot.react(
+            fmt(
+                """
+[{"type":"dahai","actor":1,"pai":"2p","tsumogiri":false},{"type":"tsumo","actor":2,"pai":"?"},{"type":"dahai","actor":2,"pai":"W","tsumogiri":true},{"type":"tsumo","actor":3,"pai":"?"},{"type":"dahai","actor":3,"pai":"6s","tsumogiri":true},{"type":"tsumo","actor":0,"pai":"?"},{"type":"dahai","actor":0,"pai":"F","tsumogiri":false},{"type":"tsumo","actor":1,"pai":"9p"}]
+"""
+            )
+        )
+        == '{"type":"dahai","pai":"5s","actor":1,"tsumogiri":false}'
+    )

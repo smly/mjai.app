@@ -868,11 +868,11 @@ class Bot:
         def _aka(tile: str) -> str:
             # Use aka if needeed
             if (
-                tile == "5s"
+                tile == "5m"
                 and self.tehai_vec34[4] == 1
                 and self.akas_in_hand[0]
             ):
-                return "5sr"
+                return "5mr"
             if (
                 tile == "5p"
                 and self.tehai_vec34[4 + 9] == 1
@@ -880,11 +880,11 @@ class Bot:
             ):
                 return "5pr"
             if (
-                tile == "5p"
+                tile == "5s"
                 and self.tehai_vec34[4 + 18] == 1
                 and self.akas_in_hand[2]
             ):
-                return "5pr"
+                return "5sr"
             return tile
 
         candidates = find_improving_tiles(self.tehai_tenhou)
