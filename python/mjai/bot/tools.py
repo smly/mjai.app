@@ -1,4 +1,21 @@
+"""
+
+* tile id = [0, ..., 33]
+
+"""
+from mjai.bot.consts import MJAI_VEC34_TILES
 from mjai.mlibriichi.tools import find_improving_tiles  # noqa, type: ignore
+
+
+def convert_mjai_tiles_to_vec34(
+    tiles: list[str],
+) -> list[int]:
+    vec34_tiles = [0] * 34
+    for mjai_tile in tiles:
+        mjai_tile = mjai_tile.replace("r", "")
+        idx = MJAI_VEC34_TILES.index(mjai_tile)
+        vec34_tiles[idx] += 1
+    return vec34_tiles
 
 
 def convert_tehai_vec34_as_tenhou(
@@ -93,6 +110,8 @@ def fmt_tenhou_call(ev: dict, player_id: int) -> str:
             called_tile_idx = 2
         return f"({consecutive_nums}{color}{called_tile_idx})"
     else:
+        # TODO: ankan, daiminkan, kakan
+
         # Not supported yet.
         return ""
 

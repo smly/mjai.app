@@ -3,11 +3,13 @@ import sys
 
 from mjai.bot.consts import MJAI_VEC34_TILES
 from mjai.bot.tools import (
+    convert_mjai_tiles_to_vec34,
     convert_tehai_vec34_as_tenhou,
     fmt_tenhou_call,
     vec34_index_to_mjai_tile,
 )
 from mjai.mlibriichi.state import ActionCandidate, PlayerState  # type: ignore
+from mjai.mlibriichi.tools import calc_shanten  # type: ignore
 from mjai.mlibriichi.tools import find_improving_tiles  # type: ignore
 
 
@@ -259,11 +261,8 @@ class Bot:
         tehai_str = convert_tehai_vec34_as_tenhou(
             self.player_state.tehai, self.player_state.akas_in_hand
         )
-        events = self.get_call_events(self.player_id)
-
-        if len(events) > 0:
-            for ev in events:
-                tehai_str += fmt_tenhou_call(ev, self.player_id)
+        for ev in self.get_call_events(self.player_id):
+            tehai_str += fmt_tenhou_call(ev, self.player_id)
 
         return tehai_str
 
@@ -510,33 +509,362 @@ class Bot:
     def is_dragon(self, tile: str) -> bool:
         return tile in ["P", "F", "C"]
 
-    def find_improving_tiles(self) -> list[tuple[str, list[str]]]:
+    def find_pon_candidates(self) -> list[dict]:
+        """
+
+        Example:
+            >>> bot.find_pon_candidates()
+            [
+                {
+                    "consumed": ["5m", "5m"],
+                    "current_shanten": 1,
+                    "current_ukeire": 8,
+                    "next_shanten": 0,
+                    "next_ukeire": 6,
+                    "discard_candidates": [
+                        {
+                            "discard_tile": "1m",
+                            "improving_tiles": ["2m", "5m"],
+                            "ukeire": 6,
+                            "shanten": 0,
+                        },
+                        ...
+                    ]
+                },
+                ...
+            ]
+        """
+        current_shanten = calc_shanten(self.tehai_tenhou)
+        current_improving_tiles = self.find_improving_tiles()  # with 13 tiles
+        current_ukeire = 0
+        for current_improving in current_improving_tiles:
+            current_ukeire = current_improving["ukeire"]
+
+        pon_candidates = []
+        if self.last_kawa_tile[0] == "5" and self.last_kawa_tile[1] != "z":
+            if self.tehai_mjai.count(self.last_kawa_tile[:2]) >= 2:
+                consumed = [self.last_kawa_tile[:2], self.last_kawa_tile[:2]]
+                pon_candidates.append(
+                    self.__new_pon_candidate(
+                        consumed, current_shanten, current_ukeire
+                    )
+                )
+            elif self.tehai_mjai.count(self.last_kawa_tile[:2] + "r") == 1:
+                consumed = [
+                    self.last_kawa_tile[:2],
+                    self.last_kawa_tile[:2] + "r",
+                ]
+                pon_candidates.append(
+                    self.__new_pon_candidate(
+                        consumed, current_shanten, current_ukeire
+                    )
+                )
+            return pon_candidates
+        else:
+            consumed = [
+                self.last_kawa_tile,
+                self.last_kawa_tile,
+            ]
+            pon_candidates.append(
+                self.__new_pon_candidate(
+                    consumed, current_shanten, current_ukeire
+                )
+            )
+
+        return pon_candidates
+
+    def __new_pon_candidate(
+        self, consumed: list[str], current_shanten: int, current_ukeire: int
+    ) -> dict:
+        new_tehai_mjai = self.tehai_mjai.copy()
+        new_tehai_mjai.remove(consumed[0])
+        new_tehai_mjai.remove(consumed[1])
+        new_call_str = fmt_tenhou_call(
+            {
+                "type": "pon",
+                "consumed": consumed,
+                "pai": self.last_kawa_tile,
+                "target": self.target_actor,
+                "actor": self.player_id,
+            },
+            self.player_id,
+        )
+
+        tehai_str = convert_tehai_vec34_as_tenhou(
+            convert_mjai_tiles_to_vec34(new_tehai_mjai),
+            self.player_state.akas_in_hand,
+        )
+        for ev in self.get_call_events(self.player_id):
+            tehai_str += fmt_tenhou_call(ev, self.player_id)
+
+        new_shanten = calc_shanten(tehai_str + new_call_str)
+
+        # NOTE: aka is not distinguished in {discard,improving}_tiles
+        candidates = find_improving_tiles(tehai_str + new_call_str)
+        candidates = list(
+            sorted(candidates, key=lambda x: len(x[1]), reverse=True)
+        )
+        candidates = [
+            (
+                vec34_index_to_mjai_tile(discard_tile_idx)
+                if discard_tile_idx < 34
+                else "",
+                [
+                    vec34_index_to_mjai_tile(tile_idx)
+                    for tile_idx in improving_tile_indices
+                ],
+            )
+            for discard_tile_idx, improving_tile_indices in candidates
+        ]
+        discard_candidates = []
+        next_best_shanten = new_shanten
+        next_best_ukeire = 0
+        for discard_tile, improving_tiles in candidates:
+            next_ukeire = 0
+            for improving_tile in improving_tiles:
+                next_ukeire += 4 - self.tiles_seen.get(improving_tile, 0)
+            next_best_ukeire = max(next_best_ukeire, next_ukeire)
+            discard_candidates.append(
+                {
+                    "discard_tile": discard_tile,
+                    "improving_tiles": improving_tiles,
+                    "ukeire": next_ukeire,
+                    "shanten": new_shanten,
+                }
+            )
+
+        return {
+            "consumed": consumed,
+            "current_shanten": current_shanten,
+            "current_ukeire": current_ukeire,
+            "discard_candidates": discard_candidates,
+            "next_shanten": next_best_shanten,
+            "next_ukeire": next_best_ukeire,
+        }
+
+    def find_chi_candidates(self) -> list[dict]:
+        """
+
+        Examples:
+            >>> bot.find_chi_candidates()
+        """
+        current_shanten = calc_shanten(self.tehai_tenhou)
+        current_improving_tiles = self.find_improving_tiles()  # with 13 tiles
+        current_ukeire = 0
+        for current_improving in current_improving_tiles:
+            current_ukeire = current_improving["ukeire"]
+
+        chi_candidates = []
+
+        color = self.last_kawa_tile[1]
+        chi_num = int(self.last_kawa_tile[0])
+        if (
+            self.can_chi_high
+            and f"{chi_num-2}{color}" in self.tehai_mjai
+            and f"{chi_num-1}{color}" in self.tehai_mjai
+        ):
+            consumed = [f"{chi_num-2}{color}", f"{chi_num-1}{color}"]
+            chi_candidates.append(
+                self.__new_chi_candidate(
+                    consumed,
+                    current_shanten,
+                    current_ukeire,
+                )
+            )
+        if (
+            self.can_chi_high
+            and f"{chi_num-2}{color}r" in self.tehai_mjai
+            and f"{chi_num-1}{color}" in self.tehai_mjai
+        ):
+            consumed = [f"{chi_num-2}{color}r", f"{chi_num-1}{color}"]
+            chi_candidates.append(
+                self.__new_chi_candidate(
+                    consumed,
+                    current_shanten,
+                    current_ukeire,
+                )
+            )
+        if (
+            self.can_chi_high
+            and f"{chi_num-2}{color}" in self.tehai_mjai
+            and f"{chi_num-1}{color}r" in self.tehai_mjai
+        ):
+            consumed = [f"{chi_num-2}{color}", f"{chi_num-1}{color}r"]
+            chi_candidates.append(
+                self.__new_chi_candidate(
+                    consumed,
+                    current_shanten,
+                    current_ukeire,
+                )
+            )
+        if (
+            self.can_chi_low
+            and f"{chi_num+1}{color}" in self.tehai_mjai
+            and f"{chi_num+2}{color}" in self.tehai_mjai
+        ):
+            consumed = [f"{chi_num+1}{color}", f"{chi_num+2}{color}"]
+            chi_candidates.append(
+                self.__new_chi_candidate(
+                    consumed,
+                    current_shanten,
+                    current_ukeire,
+                )
+            )
+        if (
+            self.can_chi_low
+            and f"{chi_num+1}{color}r" in self.tehai_mjai
+            and f"{chi_num+2}{color}" in self.tehai_mjai
+        ):
+            consumed = [f"{chi_num+1}{color}r", f"{chi_num+2}{color}"]
+            chi_candidates.append(
+                self.__new_chi_candidate(
+                    consumed,
+                    current_shanten,
+                    current_ukeire,
+                )
+            )
+        if (
+            self.can_chi_low
+            and f"{chi_num+1}{color}" in self.tehai_mjai
+            and f"{chi_num+2}{color}r" in self.tehai_mjai
+        ):
+            consumed = [f"{chi_num+1}{color}", f"{chi_num+2}{color}r"]
+            chi_candidates.append(
+                self.__new_chi_candidate(
+                    consumed,
+                    current_shanten,
+                    current_ukeire,
+                )
+            )
+        if (
+            self.can_chi_mid
+            and f"{chi_num-1}{color}" in self.tehai_mjai
+            and f"{chi_num+1}{color}" in self.tehai_mjai
+        ):
+            consumed = [f"{chi_num-1}{color}", f"{chi_num+1}{color}"]
+            chi_candidates.append(
+                self.__new_chi_candidate(
+                    consumed,
+                    current_shanten,
+                    current_ukeire,
+                )
+            )
+        if (
+            self.can_chi_mid
+            and f"{chi_num-1}{color}r" in self.tehai_mjai
+            and f"{chi_num+1}{color}" in self.tehai_mjai
+        ):
+            consumed = [f"{chi_num-1}{color}r", f"{chi_num+1}{color}"]
+            chi_candidates.append(
+                self.__new_chi_candidate(
+                    consumed,
+                    current_shanten,
+                    current_ukeire,
+                )
+            )
+        if (
+            self.can_chi_mid
+            and f"{chi_num-1}{color}" in self.tehai_mjai
+            and f"{chi_num+1}{color}r" in self.tehai_mjai
+        ):
+            consumed = [f"{chi_num-1}{color}", f"{chi_num+1}{color}r"]
+            chi_candidates.append(
+                self.__new_chi_candidate(
+                    consumed,
+                    current_shanten,
+                    current_ukeire,
+                )
+            )
+
+        return chi_candidates
+
+    def __new_chi_candidate(
+        self, consumed: list[str], current_shanten: int, current_ukeire: int
+    ):
+        new_tehai_mjai = self.tehai_mjai.copy()
+        new_tehai_mjai.remove(consumed[0])
+        new_tehai_mjai.remove(consumed[1])
+        new_call_str = fmt_tenhou_call(
+            {
+                "type": "chi",
+                "consumed": consumed,
+                "pai": self.last_kawa_tile,
+                "target": self.target_actor,
+                "actor": self.player_id,
+            },
+            self.player_id,
+        )
+
+        tehai_str = convert_tehai_vec34_as_tenhou(
+            convert_mjai_tiles_to_vec34(new_tehai_mjai),
+            self.player_state.akas_in_hand,
+        )
+        for ev in self.get_call_events(self.player_id):
+            tehai_str += fmt_tenhou_call(ev, self.player_id)
+
+        new_shanten = calc_shanten(tehai_str + new_call_str)
+
+        # NOTE: aka is not distinguished in {discard,improving}_tiles
+        candidates = find_improving_tiles(tehai_str + new_call_str)
+        candidates = list(
+            sorted(candidates, key=lambda x: len(x[1]), reverse=True)
+        )
+        candidates = [
+            (
+                vec34_index_to_mjai_tile(discard_tile_idx)
+                if discard_tile_idx < 34
+                else "",
+                [
+                    vec34_index_to_mjai_tile(tile_idx)
+                    for tile_idx in improving_tile_indices
+                ],
+            )
+            for discard_tile_idx, improving_tile_indices in candidates
+        ]
+        discard_candidates = []
+        next_best_shanten = new_shanten
+        next_best_ukeire = 0
+        for discard_tile, improving_tiles in candidates:
+            next_ukeire = 0
+            for improving_tile in improving_tiles:
+                next_ukeire += 4 - self.tiles_seen.get(improving_tile, 0)
+            next_best_ukeire = max(next_best_ukeire, next_ukeire)
+            discard_candidates.append(
+                {
+                    "discard_tile": discard_tile,
+                    "improving_tiles": improving_tiles,
+                    "ukeire": next_ukeire,
+                    "shanten": new_shanten,
+                }
+            )
+
+        return {
+            "consumed": consumed,
+            "current_shanten": current_shanten,
+            "current_ukeire": current_ukeire,
+            "discard_candidates": discard_candidates,
+            "next_shanten": next_best_shanten,
+            "next_ukeire": next_best_ukeire,
+        }
+
+    def find_improving_tiles(self) -> list[dict]:
         """
         Find tiles that improve the hand.
 
         Example:
             >>> bot.tehai_tenhou
-            1269m134p34579s56z
+            "1269m134p34579s56z"
 
             >>> ret = bot.find_improving_tiles()
             >>> len(ret)
             6
 
-            >>> discard_tile, improving_tiles = ret[0]
-            >>> discard_tile
-            6m
-            >>> improving_tiles
-            [
-                "3m",
-                "9m",
-                "1p",
-                "2p",
-                "4p",
-                "5p",
-                "8s",
-                "P",
-                "F",
-            ]
+            >>> ret[0]
+            {
+                "discard_tile": "6m",
+                "improving_tiles": ["3m", "9m", "1p", "2p", "4p", "5p", "8s", "P", "F"],  # noqa
+                "ukeire": 9
+            }
         """
 
         def _aka(tile: str) -> str:
@@ -565,13 +893,30 @@ class Bot:
         candidates = list(
             sorted(candidates, key=lambda x: len(x[1]), reverse=True)
         )
-        return [
-            (
-                _aka(vec34_index_to_mjai_tile(discard_tile_idx)),
-                [
+        candidates = [
+            {
+                "discard_tile": (
+                    _aka(vec34_index_to_mjai_tile(discard_tile_idx))
+                    if discard_tile_idx < 34
+                    else ""
+                ),
+                "improving_tiles": [
                     vec34_index_to_mjai_tile(tile_idx)
                     for tile_idx in improving_tile_indices
                 ],
-            )
+                "ukeire": sum(
+                    [
+                        4
+                        - self.tiles_seen.get(
+                            vec34_index_to_mjai_tile(tile_idx)[:2], 0
+                        )
+                        for tile_idx in improving_tile_indices
+                    ]
+                ),
+            }
             for discard_tile_idx, improving_tile_indices in candidates
         ]
+        candidates = list(
+            sorted(candidates, key=lambda x: x["ukeire"], reverse=True)
+        )
+        return candidates

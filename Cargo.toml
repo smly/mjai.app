@@ -30,11 +30,9 @@ ahash = "0.8"
 tinyvec = { version = "1", features = ["alloc", "serde"] }
 serde = { version = "1", features = ["derive"] }
 mimalloc = { version = "0.1", default-features = false, optional = true }
-riichi-tools-rs = { version = "0.0.70", features = ["fast_shanten"] }
+# NOTE: `fast_shanten` can't handle '1456s6z(p5z3)(234p0)(123m0)'
+riichi-tools-rs = { version = "0.0.73", git = "https://github.com/harphield/riichi-tools-rs", rev = "cc3eb9f" }
 
 [dependencies.pyo3]
 version = "0.19"
-features = [
-    "multiple-pymethods",
-    "anyhow",
-]
+features = ["multiple-pymethods", "anyhow"]

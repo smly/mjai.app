@@ -50,7 +50,7 @@ def test_custom_bot():
                 """
             )
         )
-        == '{"type":"dahai","pai":"9m","actor":0,"tsumogiri":false}'
+        == '{"type":"dahai","pai":"F","actor":0,"tsumogiri":false}'
     )
     assert player.tehai_tenhou == "129m134p4567s6z(p5z3)"
 
@@ -58,7 +58,7 @@ def test_custom_bot():
         player.react(
             fmt(
                 """
-                [{"type":"dahai","actor":0,"pai":"9m","tsumogiri":false},
+                [{"type":"dahai","actor":0,"pai":"F","tsumogiri":false},
                 {"type":"tsumo","actor":1,"pai":"?"},
                 {"type":"dahai","actor":1,"pai":"F","tsumogiri":false},
                 {"type":"tsumo","actor":2,"pai":"?"},
@@ -68,16 +68,16 @@ def test_custom_bot():
                 ]"""
             )
         )
-        == '{"type":"chi","actor":0,"target":3,"pai":"2p","consumed":["4p","3p"]}'  # noqa
+        == '{"type":"chi","actor":0,"target":3,"pai":"2p","consumed":["3p","4p"]}'  # noqa
     )
-    assert player.tehai_tenhou == "12m134p4567s6z(p5z3)"
+    assert player.tehai_tenhou == "129m134p4567s(p5z3)"
 
     assert (
         player.react(
             fmt(
-                """[{"type":"chi","actor":0,"target":3,"pai":"2p","consumed":["4p","3p"]}]"""  # noqa
+                """[{"type":"chi","actor":0,"target":3,"pai":"2p","consumed":["3p","4p"]}]"""  # noqa
             )
         )
         == '{"type":"dahai","pai":"1p","actor":0,"tsumogiri":false}'
     )
-    assert player.tehai_tenhou == "12m1p4567s6z(p5z3)(234p0)"
+    assert player.tehai_tenhou == "129m1p4567s(p5z3)(234p0)"

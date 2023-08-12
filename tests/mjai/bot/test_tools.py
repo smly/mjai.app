@@ -31,13 +31,13 @@ def test_find_improving_tiles(tehai_vec34_random):
     # discard tiles
     assert vec34_index_to_tenhou_tile(ret[0][0]) == "6m"
     assert vec34_index_to_tenhou_tile(ret[1][0]) == "9m"
-    assert vec34_index_to_tenhou_tile(ret[2][0]) == "1p"
-    assert vec34_index_to_tenhou_tile(ret[3][0]) == "4p"
-    assert vec34_index_to_tenhou_tile(ret[4][0]) == "5z"
-    assert vec34_index_to_tenhou_tile(ret[5][0]) == "6z"
-    assert vec34_index_to_mjai_tile(ret[3][0]) == "4p"
-    assert vec34_index_to_mjai_tile(ret[4][0]) == "P"
-    assert vec34_index_to_mjai_tile(ret[5][0]) == "F"
+    assert vec34_index_to_tenhou_tile(ret[2][0]) == "5z"
+    assert vec34_index_to_tenhou_tile(ret[3][0]) == "6z"
+    assert vec34_index_to_tenhou_tile(ret[4][0]) == "1p"
+    assert vec34_index_to_tenhou_tile(ret[5][0]) == "4p"
+    assert vec34_index_to_mjai_tile(ret[3][0]) == "F"
+    assert vec34_index_to_mjai_tile(ret[4][0]) == "1p"
+    assert vec34_index_to_mjai_tile(ret[5][0]) == "4p"
     assert ret[0][1] == [2, 8, 9, 10, 12, 13, 25, 31, 32]
     assert [vec34_index_to_mjai_tile(x) for x in ret[0][1]] == [
         "3m",

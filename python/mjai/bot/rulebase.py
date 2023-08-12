@@ -13,46 +13,33 @@ class RulebaseBot(Bot):
             return self.action_riichi()
 
         if self.can_pon and self.is_yakuhai(self.last_kawa_tile):
-            # TODO: 手の進まないポンはしない
-            # TODO: 赤ドラを考慮する
-            return self.action_pon(consumed=[self.last_kawa_tile] * 2)
+            pons = self.find_pon_candidates()
+            for pon in pons:
+                if pon["current_shanten"] > pon["next_shanten"]:
+                    return self.action_pon(consumed=pon["consumed"])
 
-        elif self.can_pon and len(self.get_call_events(self.player_id)) > 0:
-            # TODO: 手の進まないポンはしない
-            # TODO: 赤ドラを考慮する
-            return self.action_pon(consumed=[self.last_kawa_tile] * 2)
+        if self.can_pon and len(self.get_call_events(self.player_id)) > 0:
+            pons = self.find_pon_candidates()
+            for pon in pons:
+                if pon["current_shanten"] > pon["next_shanten"]:
+                    return self.action_pon(consumed=pon["consumed"])
 
-        elif self.can_chi and len(self.get_call_events(self.player_id)) > 0:
-            # TODO: 手の進まないポンはしない
-            # TODO: chi においてドラを考慮する
-            # TODO: 候補を tools から取得して選択できるようにする
-            # TODO: 候補に対して hand analysis して受け入れ枚数最大となるようなチーを選択する
-            color = self.last_kawa_tile[1]
-            target_num = int(self.last_kawa_tile[0])
-            if self.can_chi_high:
-                consumed = [
-                    f"{target_num - 2}{color}",
-                    f"{target_num - 1}{color}",
-                ]
-                return self.action_chi(consumed=consumed)
-            elif self.can_chi_low:
-                consumed = [
-                    f"{target_num + 2}{color}",
-                    f"{target_num + 1}{color}",
-                ]
-                return self.action_chi(consumed=consumed)
-            else:
-                consumed = [
-                    f"{target_num - 1}{color}",
-                    f"{target_num + 1}{color}",
-                ]
-                return self.action_chi(consumed=consumed)
+        if self.can_chi and len(self.get_call_events(self.player_id)) > 0:
+            chis = self.find_chi_candidates()
+            best_ukeire = max([chi["next_ukeire"] for chi in chis])
+            for chi in chis:
+                if (
+                    chi["current_shanten"] > chi["next_shanten"]
+                    and chi["next_ukeire"] == best_ukeire
+                ):
+                    return self.action_chi(consumed=chi["consumed"])
 
         if self.can_discard:
-            # TODO: 喰いタン判定
-            # TODO: 受け入れ枚数最大となるような捨牌を選択
             candidates = self.find_improving_tiles()
-            for discard_tile, improving_tiles in candidates:
+            for candidate in candidates:
+                discard_tile = candidate["discard_tile"]
+                if self.forbidden_tiles.get(discard_tile[:2], True):
+                    continue
                 return self.action_discard(discard_tile)
 
             return self.action_discard(

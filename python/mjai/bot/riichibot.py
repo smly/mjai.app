@@ -13,8 +13,8 @@ class RiichiBot(Bot):
             return self.action_riichi()
         elif self.can_discard:
             candidates = self.find_improving_tiles()
-            for discard_tile, improving_tiles in candidates:
-                return self.action_discard(discard_tile)
+            for candidate in candidates:
+                return self.action_discard(candidate["discard_tile"])
             return self.action_discard(
                 self.last_self_tsumo or self.tehai_mjai[0]
             )

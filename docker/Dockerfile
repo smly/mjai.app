@@ -46,3 +46,4 @@ USER ubuntu
 
 COPY requirements.txt /workspace/
 RUN . /workspace/.bashrc && python -m pip install -r requirements.txt
+RUN . /workspace/.bashrc && python -m pip install git+https://github.com/smly/mjai.app.git
