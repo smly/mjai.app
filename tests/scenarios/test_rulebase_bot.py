@@ -14,11 +14,8 @@ def test_regular_game():
                 "examples/tsumogiri.zip",
                 "examples/tsumogiri.zip",
             ]
-            try:
-                game = Simulator(submissions, dirpath)
-                is_end = game._internal_run(0)
-            except Exception:
-                pass
+            game = Simulator(submissions, dirpath)
+            is_end = game._internal_run(0)
 
             for player_idx in range(4):
                 assert (
@@ -32,4 +29,4 @@ def test_regular_game():
             assert (Path(dirpath) / "0.game.error.json").open(
                 "r"
             ).read() == "{}"
-            assert is_end is None
+            assert is_end is None  # type: ignore
