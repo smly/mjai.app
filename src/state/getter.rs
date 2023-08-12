@@ -39,6 +39,37 @@ impl PlayerState {
     #[getter]
     #[inline]
     #[must_use]
+    pub const fn bakaze(&self) -> u8 {
+        self.bakaze.as_u8()
+    }
+    #[getter]
+    #[inline]
+    #[must_use]
+    pub const fn jikaze(&self) -> u8 {
+        self.jikaze.as_u8()
+    }
+    #[getter]
+    #[inline]
+    #[must_use]
+    pub const fn scores(&self) -> [i32; 4] {
+        self.scores
+    }
+    #[getter]
+    #[inline]
+    #[must_use]
+    pub const fn tiles_seen(&self) -> [u8; 34] {
+        self.tiles_seen
+    }
+    #[getter]
+    #[inline]
+    #[must_use]
+    pub const fn forbidden_tiles(&self) -> [bool; 34] {
+        self.forbidden_tiles
+    }
+
+    #[getter]
+    #[inline]
+    #[must_use]
     pub const fn tehai(&self) -> [u8; 34] {
         self.tehai
     }

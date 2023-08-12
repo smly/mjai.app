@@ -3,7 +3,7 @@ Docker コンテナに submission file を配置して実行するためのラ�
 
 1. submission file をマウントした Docker コンテナを起動
 2. Docker コンテナに submission file のアーカイブを展開する
-3. Docker コンテナ内で `python/mjaisimulator/http_server/server.py` を実行する
+3. Docker コンテナ内で `python/mjai/http_server/server.py` を実行する
 """
 import json
 import shutil
@@ -13,7 +13,7 @@ from pathlib import Path
 
 import requests
 from loguru import logger
-from mjaisimulator.exceptions import EngineRuntimeError, TimeoutExpired
+from mjai.exceptions import EngineRuntimeError, TimeoutExpired
 
 MEMORY_SIZE = "4G"
 CPU_CORES = "4"
@@ -105,6 +105,7 @@ class MjaiPlayerClient:
             "/workspace/00__server__.py",
             f"{player_id}",
         ]
+        logger.info("cmd: " + " ".join(command))
         proc = subprocess.Popen(
             command,
             bufsize=0,

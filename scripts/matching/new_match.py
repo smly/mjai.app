@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 
 from loguru import logger
-from mjaisimulator.matching import Matching, UserId
+from mjai.matching import Matching, UserId
 
 
 def parse_args():

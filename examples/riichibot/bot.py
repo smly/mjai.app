@@ -23,20 +23,24 @@ def tiles_to_136_array(tiles):
     for tile_ in sorted(tiles):
         tile = tile_map.get(tile_, tile_)
         tile_type = tile[1]
-        tile_num = tile[0] if tile[0] != '0' else '5'
-        if tile_type == 'm':
+        tile_num = tile[0] if tile[0] != "0" else "5"
+        if tile_type == "m":
             man_strs += tile_num
-        elif tile_type == 'p':
+        elif tile_type == "p":
             pin_strs += tile_num
-        elif tile_type == 's':
+        elif tile_type == "s":
             sou_strs += tile_num
         else:
             honors_strs += tile_num
 
-    return TilesConverter.string_to_136_array(man=man_strs, pin=pin_strs, sou=sou_strs, honors=honors_strs)
+    return TilesConverter.string_to_136_array(
+        man=man_strs, pin=pin_strs, sou=sou_strs, honors=honors_strs
+    )
 
 
-def tiles_to_hand(tiles: list[str], win_tile: str, is_tsumo: bool, bakaze: str, kaze: str):
+def tiles_to_hand(
+    tiles: list[str], win_tile: str, is_tsumo: bool, bakaze: str, kaze: str
+):
     calculator = HandCalculator()
     tiles_ = tiles_to_136_array(tiles)
     win_tile_ = tiles_to_136_array([win_tile])[0]
@@ -56,17 +60,23 @@ def tiles_to_hand(tiles: list[str], win_tile: str, is_tsumo: bool, bakaze: str, 
     else:
         player_wind = NORTH
 
-    result = calculator.estimate_hand_value(tiles_, win_tile_, config=HandConfig(is_tsumo=is_tsumo, player_wind=player_wind, round_wind=round_wind))
+    result = calculator.estimate_hand_value(
+        tiles_,
+        win_tile_,
+        config=HandConfig(
+            is_tsumo=is_tsumo, player_wind=player_wind, round_wind=round_wind
+        ),
+    )
     return result
 
 
 def tiles_to_shanten(tiles):
     shanten = Shanten()
 
-    man_strs = ''
-    pin_strs = ''
-    sou_strs = ''
-    honors_strs = ''
+    man_strs = ""
+    pin_strs = ""
+    sou_strs = ""
+    honors_strs = ""
 
     tile_map = {
         "E": "1z",
@@ -81,17 +91,19 @@ def tiles_to_shanten(tiles):
     for tile_ in sorted(tiles):
         tile = tile_map.get(tile_, tile_)
         tile_type = tile[1]
-        tile_num = tile[0] if tile[0] != '0' else '5'
-        if tile_type == 'm':
+        tile_num = tile[0] if tile[0] != "0" else "5"
+        if tile_type == "m":
             man_strs += tile_num
-        elif tile_type == 'p':
+        elif tile_type == "p":
             pin_strs += tile_num
-        elif tile_type == 's':
+        elif tile_type == "s":
             sou_strs += tile_num
         else:
             honors_strs += tile_num
 
-    tiles = TilesConverter.string_to_34_array(man=man_strs, pin=pin_strs, sou=sou_strs, honors=honors_strs)
+    tiles = TilesConverter.string_to_34_array(
+        man=man_strs, pin=pin_strs, sou=sou_strs, honors=honors_strs
+    )
     res = shanten.calculate_shanten(tiles)
     return res
 
@@ -148,7 +160,7 @@ class Bot:
                     zero_indexed_kyoku = 4 + event["kyoku"] - 1  # type: ignore
                 elif self.bakaze == "W":
                     zero_indexed_kyoku = 8 + event["kyoku"] - 1  # type: ignore
-                wind_idx = (self.actor_id - zero_indexed_kyoku)
+                wind_idx = self.actor_id - zero_indexed_kyoku
                 self.kaze = ["E", "S", "W", "N"][wind_idx % 4]
             elif event["type"] == "tsumo":  # type: ignore
                 if event["actor"] == self.actor_id:  # type: ignore
@@ -168,69 +180,95 @@ class Bot:
 
             # ツモできるならばする
             if self.check_hora(events[-1]):
-                return json.dumps({
-                    "type": "hora",
-                    "actor": self.actor_id,
-                    "target": self.actor_id,
-                    "pai": events[-1]["pai"]  # type: ignore
-                }, separators=(",", ":"))
+                return json.dumps(
+                    {
+                        "type": "hora",
+                        "actor": self.actor_id,
+                        "target": self.actor_id,
+                        "pai": events[-1]["pai"],  # type: ignore
+                    },
+                    separators=(",", ":"),
+                )
 
             # リーチしているならばツモ切り
             if self.is_riichi:
-                return json.dumps({
-                    "type": "dahai",
-                    "pai": tsumo_tile,
-                    "actor": self.actor_id,
-                    "tsumogiri": True,
-                }, separators=(",", ":"))
+                return json.dumps(
+                    {
+                        "type": "dahai",
+                        "pai": tsumo_tile,
+                        "actor": self.actor_id,
+                        "tsumogiri": True,
+                    },
+                    separators=(",", ":"),
+                )
 
             # リーチできるならする
             if self.can_riichi():
-                return json.dumps({
-                    "type": "reach",
-                    "actor": self.actor_id,
-                })
+                return json.dumps(
+                    {
+                        "type": "reach",
+                        "actor": self.actor_id,
+                    }
+                )
 
             # 捨牌選択
             best_choice = get_best_tile(self.tehais.copy())  # type: ignore
-            return json.dumps({
-                "type": "dahai",
-                "pai": best_choice,
-                "actor": self.actor_id,
-                "tsumogiri": tsumo_tile == best_choice,
-            }, separators=(",", ":"))
+            return json.dumps(
+                {
+                    "type": "dahai",
+                    "pai": best_choice,
+                    "actor": self.actor_id,
+                    "tsumogiri": tsumo_tile == best_choice,
+                },
+                separators=(",", ":"),
+            )
 
-        elif events[-1]["type"] == "reach" and events[-1]["actor"] == self.actor_id:
+        elif (
+            events[-1]["type"] == "reach"
+            and events[-1]["actor"] == self.actor_id
+        ):
             self.is_riichi = True
             best_choice = get_best_tile(self.tehais.copy())  # type: ignore
-            return json.dumps({
-                "type": "dahai",
-                "pai": best_choice,
-                "actor": self.actor_id,
-                "tsumogiri": self.last_tsumo == best_choice,
-            }, separators=(",", ":"))
+            return json.dumps(
+                {
+                    "type": "dahai",
+                    "pai": best_choice,
+                    "actor": self.actor_id,
+                    "tsumogiri": self.last_tsumo == best_choice,
+                },
+                separators=(",", ":"),
+            )
         else:
             # ロンできるならばする
-            if (events[-1]["type"] == "dahai"
+            if (
+                events[-1]["type"] == "dahai"
                 and events[-1]["actor"] != self.actor_id
                 and self.check_hora(events[-1], is_tsumo=False)
             ):
-                return json.dumps({
-                    "type": "hora",
-                    "actor": self.actor_id,
-                    "target": events[-1]["actor"],  # type: ignore
-                    "pai": events[-1]["pai"]  # type: ignore
-                }, separators=(",", ":"))
+                return json.dumps(
+                    {
+                        "type": "hora",
+                        "actor": self.actor_id,
+                        "target": events[-1]["actor"],  # type: ignore
+                        "pai": events[-1]["pai"],  # type: ignore
+                    },
+                    separators=(",", ":"),
+                )
 
             # それ以外
             # 他人の打牌に対して常にアクションしない
-            return json.dumps({
-                "type": "none",
-            }, separators=(",", ":"))
+            return json.dumps(
+                {
+                    "type": "none",
+                },
+                separators=(",", ":"),
+            )
 
     def can_riichi(self) -> bool:
         # テンパイになるか判別
-        return get_best_shanten(self.tehais.copy()) == 0 and self.left_tiles >= 4
+        return (
+            get_best_shanten(self.tehais.copy()) == 0 and self.left_tiles >= 4
+        )
 
     def check_hora(self, ev: dict, is_tsumo: bool = True) -> bool:
         # フリテンならロンしない
@@ -239,10 +277,22 @@ class Bot:
 
         if is_tsumo:
             assert len(self.tehais) == 14
-            hand = tiles_to_hand(self.tehais, ev["pai"], is_tsumo=is_tsumo, bakaze=self.bakaze, kaze=self.kaze)
+            hand = tiles_to_hand(
+                self.tehais,
+                ev["pai"],
+                is_tsumo=is_tsumo,
+                bakaze=self.bakaze,
+                kaze=self.kaze,
+            )
         else:
             assert len(self.tehais) == 13
-            hand = tiles_to_hand(self.tehais + [ev["pai"]], ev["pai"], is_tsumo=is_tsumo, bakaze=self.bakaze, kaze=self.kaze)
+            hand = tiles_to_hand(
+                self.tehais + [ev["pai"]],
+                ev["pai"],
+                is_tsumo=is_tsumo,
+                bakaze=self.bakaze,
+                kaze=self.kaze,
+            )
         return hand.cost is not None
 
 

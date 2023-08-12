@@ -23,7 +23,7 @@ jobs:
         uses: technote-space/get-diff-action@v6
         with:
           PATTERNS: |
-            mjaisimulator/**/*.py
+            mjai/**/*.py
             tests/**/*.py
 
       - name: Set up Python 3.10
@@ -43,7 +43,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install flake8 black isort pyright pytest
-          python -m pip install ./dist/mjaisimulator-*-cp310-*.whl
+          python -m pip install ./dist/mjai-*-cp310-*.whl
 
       - name: black
         run: black python tests --check --diff

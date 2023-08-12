@@ -1,11 +1,11 @@
 [package]
-name = "mjaisimulator"
+name = "mjai"
 version = "0.1.9"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [lib]
-name = "mjaisimulator"
+name = "mlibriichi"
 crate-type = ["cdylib"]
 
 [dependencies]
@@ -30,10 +30,9 @@ ahash = "0.8"
 tinyvec = { version = "1", features = ["alloc", "serde"] }
 serde = { version = "1", features = ["derive"] }
 mimalloc = { version = "0.1", default-features = false, optional = true }
+# NOTE: `fast_shanten` can't handle '1456s6z(p5z3)(234p0)(123m0)'
+riichi-tools-rs = { version = "0.0.73", git = "https://github.com/harphield/riichi-tools-rs", rev = "cc3eb9f" }
 
 [dependencies.pyo3]
 version = "0.19"
-features = [
-    "multiple-pymethods",
-    "anyhow",
-]
+features = ["multiple-pymethods", "anyhow"]

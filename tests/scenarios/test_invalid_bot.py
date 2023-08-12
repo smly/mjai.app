@@ -3,17 +3,17 @@ import os
 import tempfile
 from pathlib import Path
 
-from mjaisimulator.game import Simulator
+from mjai.game import Simulator
 
 
 def test_invalid_msg():
     if bool(os.getenv("SKIP_TEST_WITH_DOCKER")) is False:
         with tempfile.TemporaryDirectory() as dirpath:
             submissions = [
-                "players/shanten.zip",
-                "players/tsumogiri.zip",
-                "players/tsumogiri.zip",
-                "players/invalidbot.zip",
+                "examples/shanten.zip",
+                "examples/tsumogiri.zip",
+                "examples/tsumogiri.zip",
+                "examples/invalidbot.zip",
             ]
             game = Simulator(submissions, dirpath)
             next_state = game._internal_run(0)

@@ -1,6 +1,6 @@
 import json
 
-from mjaisimulator import MjaiPlayerClient
+from mjai import MjaiPlayerClient
 
 
 class Verification:

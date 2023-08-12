@@ -1,5 +1,5 @@
 def test_import():
-    import mjaisimulator.mjaisimulator.arena
+    import mjai.mlibriichi.arena
 
-    assert mjaisimulator.mjaisimulator.arena
-    assert "py_match" in dir(mjaisimulator.mjaisimulator.arena.Match)
+    assert mjai.mlibriichi.arena
+    assert "py_match" in dir(mjai.mlibriichi.arena.Match)

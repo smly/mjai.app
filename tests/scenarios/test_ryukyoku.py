@@ -5,7 +5,7 @@ import sys
 
 def test_multiple_players_with_docker_wrapper():
     """九種九牌の流局後に適切に打牌できるか確認"""
-    sys.path.append("./players/shanten")
+    sys.path.append("./examples/shanten")
     mod = importlib.import_module("bot")
 
     player_id = 0

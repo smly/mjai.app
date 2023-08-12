@@ -76,3 +76,4 @@ logs
 players/weakml.zip
 .ipynb_checkpoints
 *.ipynb
+examples/submissionFiles*

@@ -3,7 +3,7 @@ requires = ["maturin>=1.1,<2.0"]
 build-backend = "maturin"
 
 [project]
-name = "mjaisimulator"
+name = "mjai"
 requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Rust",
@@ -26,6 +26,7 @@ test = [
 [tool.maturin]
 features = ["pyo3/extension-module"]
 python-source = "python"
+module-name = "mjai.mlibriichi"
 
 [tool.black]
 line-length = 79
