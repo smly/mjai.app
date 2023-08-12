@@ -57,4 +57,4 @@ ENV PATH $PATH:$CARGO_HOME/bin
 
 COPY requirements.txt /workspace/
 RUN . /workspace/.bashrc && python -m pip install -r requirements.txt
-RUN . /workspace/.bashrc && python -m pip install git+https://github.com/smly/mjai.app.git@refactoring
+RUN . /workspace/.bashrc && python -m pip install git+https://github.com/smly/mjai.app.git@46c42ea
