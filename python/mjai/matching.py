@@ -26,7 +26,7 @@ class Matching:
             user_id: path.stem for user_id, path in path_map.items()
         }
         self.ratings = {
-            user_id: rating["init_score"] / 100.0
+            user_id: rating / 100.0
             for user_id, rating in user_rating_map.items()
         }
         self.match_count: Counter = Counter(
