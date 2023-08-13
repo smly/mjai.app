@@ -39,7 +39,9 @@ class RulebaseBot(Bot):
                     return self.action_chi(consumed=chi["consumed"])
 
         if self.can_discard:
-            logger.info(f"Tehai: {self.tehai_tenhou}")
+            logger.info(
+                f"{self.bakaze}{self.kyoku}-{self.honba}: {self.tehai_tenhou} | {self.last_self_tsumo}"
+            )
 
             # Tsumogiri only
             if self.self_riichi_declared:
