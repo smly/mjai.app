@@ -125,6 +125,9 @@ impl PlayerState {
                         bail!("tsumogiri but the player has not dealed any tile yet");
                     }
                 }
+                if self.self_riichi_declared() && !tsumogiri {
+                    bail!("cannot discard after riichi");
+                }
             }
 
             Event::Reach { .. } => {
