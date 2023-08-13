@@ -37,6 +37,10 @@ class RulebaseBot(Bot):
                     return self.action_chi(consumed=chi["consumed"])
 
         if self.can_discard:
+            # Tsumogiri only
+            if self.self_riichi_declared:
+                return self.action_discard(self.last_self_tsumo)
+
             candidates = self.find_improving_tiles()
             for candidate in candidates:
                 discard_tile = candidate["discard_tile"]

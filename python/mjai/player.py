@@ -173,10 +173,17 @@ class MjaiPlayerClient:
         try:
             input_data = events.encode("utf8")
             logger.debug(f"{self.player_id} <- {input_data}")
+
+            timeout_per_action = self.timeout
+            if json.loads(events)[0]["type"] in ["start_game", "start_kyoku"]:
+                # Workaround: To avoid timeouts
+                # Some bots time out when loading models with start_game.
+                timeout_per_action = 10.0
+
             resp = requests.post(
                 f"http://localhost:{self.port_num}",
                 data=input_data,
-                timeout=self.timeout,
+                timeout=timeout_per_action,
             )
             assert resp.status_code == 200
             outs = resp.content.decode("utf8")
