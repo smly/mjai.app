@@ -1,3 +1,6 @@
+import json
+
+import pytest
 from mjai.bot.rulebase import RulebaseBot
 
 
@@ -235,3 +238,77 @@ def test_error_case():
         )
         == '{"type":"dahai","pai":"5s","actor":1,"tsumogiri":false}'
     )
+
+
+def test_validation_tedashi_after_riichi():
+    player = RulebaseBot(player_id=0)
+    assert (
+        player.react(
+            """[{"type":"start_game","names":["0","1","2","3"],"id":0}]"""
+        )
+        == '{"type":"none"}'
+    )
+    assert player.tehai_tenhou == ""
+
+    assert (
+        player.react(
+            """
+            [{"type":"start_kyoku","bakaze":"S","dora_marker":"1p","kyoku":2,
+            "honba":2,"kyotaku":0,"oya":1,"scores":[1800,61100,11300,26800],
+            "tehais":
+            [["1p","2p","3p","4p","5p","6p","7p","8p","9p","N","N","N","9s"],
+            ["?","?","?","?","?","?","?","?","?","?","?","?","?"],
+            ["?","?","?","?","?","?","?","?","?","?","?","?","?"],
+            ["?","?","?","?","?","?","?","?","?","?","?","?","?"]]},
+            {"type":"tsumo","actor":1,"pai":"?"},
+            {"type":"dahai","actor":1,"pai":"F","tsumogiri":false},
+            {"type":"tsumo","actor":2,"pai":"?"},
+            {"type":"dahai","actor":2,"pai":"3m","tsumogiri":true},
+            {"type":"tsumo","actor":3,"pai":"?"},
+            {"type":"dahai","actor":3,"pai":"1m","tsumogiri":true},
+            {"type":"tsumo","actor":0,"pai":"S"}]""".replace(
+                "\n", ""
+            ).strip()
+        )
+        == '{"type":"reach","actor":0}'
+    )
+    assert (
+        player.react(
+            """
+            [{"type":"reach","actor":0}]""".replace(
+                "\n", ""
+            ).strip()
+        )
+        == '{"type":"dahai","pai":"9s","actor":0,"tsumogiri":false}'
+    )
+    events = json.loads(
+        """
+            [{"type":"dahai","pai":"9s","actor":0,"tsumogiri":false},
+            {"type":"reach_accepted","actor":0},
+            {"type":"tsumo","actor":1,"pai":"?"},
+            {"type":"dahai","actor":1,"pai":"F","tsumogiri":false},
+            {"type":"tsumo","actor":2,"pai":"?"},
+            {"type":"dahai","actor":2,"pai":"3m","tsumogiri":true},
+            {"type":"tsumo","actor":3,"pai":"?"},
+            {"type":"dahai","actor":3,"pai":"1m","tsumogiri":true},
+            {"type":"tsumo","actor":0,"pai":"S"}]""".replace(
+            "\n", ""
+        ).strip()
+    )
+    for ev in events:
+        player.player_state.update(json.dumps(ev))
+
+    resp = player.player_state.validate_reaction(
+        '{"type":"hora","actor":0,"target":0,"pai":"S"}'
+    )
+    assert resp is None
+
+    resp = player.player_state.validate_reaction(
+        '{"type":"dahai","actor":0,"pai":"S","tsumogiri":true}'
+    )
+    assert resp is None
+
+    with pytest.raises(RuntimeError):
+        player.player_state.validate_reaction(
+            '{"type":"dahai","actor":0,"pai":"N","tsumogiri":false}'
+        )
