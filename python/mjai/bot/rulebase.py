@@ -42,7 +42,7 @@ class RulebaseBot(Bot):
             )
 
             # Tsumogiri only
-            if self.self_riichi_declared:
+            if self.self_riichi_accepted:
                 return self.action_discard(self.last_self_tsumo)
 
             candidates = self.find_improving_tiles()

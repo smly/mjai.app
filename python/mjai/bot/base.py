@@ -178,6 +178,10 @@ class Bot:
         return self.player_state.self_riichi_declared
 
     @property
+    def self_riichi_accepted(self) -> bool:
+        return self.player_state.self_riichi_accepted
+
+    @property
     def tehai_vec34(self) -> list[int]:
         """
         Player's hand as a list of tile counts.

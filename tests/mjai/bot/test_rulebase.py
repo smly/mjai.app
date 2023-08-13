@@ -279,11 +279,11 @@ def test_validation_tedashi_after_riichi():
                 "\n", ""
             ).strip()
         )
-        == '{"type":"dahai","pai":"S","actor":0,"tsumogiri":true}'
+        == '{"type":"dahai","pai":"9s","actor":0,"tsumogiri":false}'
     )
     events = json.loads(
         """
-            [{"type":"dahai","pai":"S","actor":0,"tsumogiri":true},
+            [{"type":"dahai","pai":"9s","actor":0,"tsumogiri":false},
             {"type":"reach_accepted","actor":0},
             {"type":"tsumo","actor":1,"pai":"?"},
             {"type":"dahai","actor":1,"pai":"F","tsumogiri":false},
@@ -291,7 +291,7 @@ def test_validation_tedashi_after_riichi():
             {"type":"dahai","actor":2,"pai":"3m","tsumogiri":true},
             {"type":"tsumo","actor":3,"pai":"?"},
             {"type":"dahai","actor":3,"pai":"1m","tsumogiri":true},
-            {"type":"tsumo","actor":0,"pai":"9s"}]""".replace(
+            {"type":"tsumo","actor":0,"pai":"S"}]""".replace(
             "\n", ""
         ).strip()
     )
@@ -304,7 +304,7 @@ def test_validation_tedashi_after_riichi():
     assert resp is None
 
     resp = player.player_state.validate_reaction(
-        '{"type":"dahai","actor":0,"pai":"9s","tsumogiri":true}'
+        '{"type":"dahai","actor":0,"pai":"S","tsumogiri":true}'
     )
     assert resp is None
 

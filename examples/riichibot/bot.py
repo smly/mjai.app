@@ -13,7 +13,7 @@ class RiichiBot(Bot):
             return self.action_riichi()
         elif self.can_discard:
             # Tsumogiri only
-            if self.self_riichi_declared:
+            if self.self_riichi_accepted:
                 return self.action_discard(self.last_self_tsumo)
 
             candidates = self.find_improving_tiles()
