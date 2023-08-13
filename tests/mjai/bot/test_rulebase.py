@@ -279,11 +279,11 @@ def test_validation_tedashi_after_riichi():
                 "\n", ""
             ).strip()
         )
-        == '{"type":"dahai","pai":"9s","actor":0,"tsumogiri":false}'
+        == '{"type":"dahai","pai":"S","actor":0,"tsumogiri":true}'
     )
     events = json.loads(
         """
-            [{"type":"dahai","pai":"9s","actor":0,"tsumogiri":false},
+            [{"type":"dahai","pai":"S","actor":0,"tsumogiri":true},
             {"type":"reach_accepted","actor":0},
             {"type":"tsumo","actor":1,"pai":"?"},
             {"type":"dahai","actor":1,"pai":"F","tsumogiri":false},
@@ -291,7 +291,7 @@ def test_validation_tedashi_after_riichi():
             {"type":"dahai","actor":2,"pai":"3m","tsumogiri":true},
             {"type":"tsumo","actor":3,"pai":"?"},
             {"type":"dahai","actor":3,"pai":"1m","tsumogiri":true},
-            {"type":"tsumo","actor":0,"pai":"S"}]""".replace(
+            {"type":"tsumo","actor":0,"pai":"9s"}]""".replace(
             "\n", ""
         ).strip()
     )
@@ -304,7 +304,7 @@ def test_validation_tedashi_after_riichi():
     assert resp is None
 
     resp = player.player_state.validate_reaction(
-        '{"type":"dahai","actor":0,"pai":"S","tsumogiri":true}'
+        '{"type":"dahai","actor":0,"pai":"9s","tsumogiri":true}'
     )
     assert resp is None
 
@@ -312,3 +312,45 @@ def test_validation_tedashi_after_riichi():
         player.player_state.validate_reaction(
             '{"type":"dahai","actor":0,"pai":"N","tsumogiri":false}'
         )
+
+
+def test_validation_tedashi_before_riichi_accepted():
+    player = RulebaseBot(player_id=0)
+    assert (
+        player.react(
+            """[{"type":"start_game","names":["0","1","2","3"],"id":0}]"""
+        )
+        == '{"type":"none"}'
+    )
+    assert player.tehai_tenhou == ""
+
+    assert (
+        player.react(
+            """
+            [{"type":"start_kyoku","bakaze":"S","dora_marker":"1p","kyoku":2,
+            "honba":2,"kyotaku":0,"oya":1,"scores":[1800,61100,11300,26800],
+            "tehais":
+            [["1p","2p","3p","4p","5p","6p","7p","8p","9p","N","N","N","9s"],
+            ["?","?","?","?","?","?","?","?","?","?","?","?","?"],
+            ["?","?","?","?","?","?","?","?","?","?","?","?","?"],
+            ["?","?","?","?","?","?","?","?","?","?","?","?","?"]]},
+            {"type":"tsumo","actor":1,"pai":"?"},
+            {"type":"dahai","actor":1,"pai":"F","tsumogiri":false},
+            {"type":"tsumo","actor":2,"pai":"?"},
+            {"type":"dahai","actor":2,"pai":"3m","tsumogiri":true},
+            {"type":"tsumo","actor":3,"pai":"?"},
+            {"type":"dahai","actor":3,"pai":"1m","tsumogiri":true},
+            {"type":"tsumo","actor":0,"pai":"S"}]""".replace(
+                "\n", ""
+            ).strip()
+        )
+        == '{"type":"reach","actor":0}'
+    )
+    player.player_state.update('{"type":"reach","actor":0}')
+    player.player_state.validate_reaction(
+        '{"type":"dahai","pai":"S","actor":0,"tsumogiri":true}'
+    )
+    player.player_state.validate_reaction(
+        '{"type":"dahai","pai":"9s","actor":0,"tsumogiri":false}'
+    )
+    assert True

@@ -492,8 +492,8 @@ class Bot:
         return json.dumps({"type": "none"}, separators=(",", ":"))
 
     def start(self) -> None:
-        while True:
-            line = sys.stdin.readline().strip()
+        while line := sys.stdin.readline():
+            line = line.strip()
             resp = self.react(line)
             sys.stdout.write(resp + "\n")
             sys.stdout.flush()

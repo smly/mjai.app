@@ -125,7 +125,7 @@ impl PlayerState {
                         bail!("tsumogiri but the player has not dealed any tile yet");
                     }
                 }
-                if self.self_riichi_declared() && !tsumogiri {
+                if self.riichi_accepted[0] && !tsumogiri {
                     bail!("cannot discard after riichi");
                 }
             }

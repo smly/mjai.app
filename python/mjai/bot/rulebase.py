@@ -1,5 +1,7 @@
 """Reference implementtation with using high-level API.
 """
+from loguru import logger
+
 from mjai import Bot
 
 
@@ -35,6 +37,14 @@ class RulebaseBot(Bot):
                     return self.action_chi(consumed=chi["consumed"])
 
         if self.can_discard:
+            logger.info(
+                f"{self.bakaze}{self.kyoku}-{self.honba}: {self.tehai_tenhou}"
+            )
+
+            # Tsumogiri only
+            if self.self_riichi_declared:
+                return self.action_discard(self.last_self_tsumo)
+
             candidates = self.find_improving_tiles()
             for candidate in candidates:
                 discard_tile = candidate["discard_tile"]

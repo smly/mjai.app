@@ -47,7 +47,7 @@ def convert_tehai_vec34_as_tenhou(
             )
         elif tile_idx == 4 + 18:
             if akas_in_hand and akas_in_hand[2]:
-                ps.append(0)
+                ss.append(0)
             ss += [5] * (
                 tile_count - 1
                 if akas_in_hand and akas_in_hand[2]
