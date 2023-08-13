@@ -2,6 +2,8 @@
 """
 import sys
 
+from loguru import logger
+
 from mjai import Bot
 
 
@@ -37,6 +39,8 @@ class RulebaseBot(Bot):
                     return self.action_chi(consumed=chi["consumed"])
 
         if self.can_discard:
+            logger.info(f"Tehai: {self.tehai_tenhou}")
+
             # Tsumogiri only
             if self.self_riichi_declared:
                 return self.action_discard(self.last_self_tsumo)
