@@ -110,6 +110,9 @@ In the case of an ankan, the dora event comes first, followed by the tsumo event
 The procedures executed by Simulator can be checked and debugged one by one as follows:
 
 ```bash
+# pull latest docker image
+% docker pull docker.io/smly/mjai-client:v3
+
 # launch
 % CONTAINER_ID=`docker run -d --rm -p 28080:3000 --mount "type=bind,src=/Users/smly/gitws/mjai.app/examples/weakml.zip,dst=/bot.zip,readonly" smly/mjai-client:v3 sleep infinity`
 
