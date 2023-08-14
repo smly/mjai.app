@@ -3,9 +3,9 @@ import sys
 
 from mjai.bot.consts import MJAI_VEC34_TILES
 from mjai.bot.tools import (
-    _fmt_tenhou_call,
+    _fmt_short_call,
     convert_mjai_tiles_to_vec34,
-    convert_tehai_vec34_as_tenhou,
+    convert_tehai_vec34_as_short,
     fmt_calls,
     vec34_index_to_mjai_tile,
 )
@@ -230,7 +230,7 @@ class Bot:
         return tiles
 
     @property
-    def tehai_tenhou(self) -> str:
+    def tehai(self) -> str:
         """
         Player's hand in the riichi-tools-rs format (like 123m0456p789s111z)
 
@@ -252,16 +252,16 @@ class Bot:
         ref: https://github.com/harphield/riichi-tools-rs#hand-representation-parsing  # noqa
 
         Example:
-            >>> bot.tehai_tenhou
+            >>> bot.tehai
             "1269m134p34579s56z"
 
-            >>> bot.tehai_tenhou
+            >>> bot.tehai
             "012346789m11122z"
 
-            >>> bot.tehai_tenhou
+            >>> bot.tehai
             "123m134p4567s6z(p5z3)"
         """
-        tehai_str = convert_tehai_vec34_as_tenhou(
+        tehai_str = convert_tehai_vec34_as_short(
             self.player_state.tehai, self.player_state.akas_in_hand
         )
         events = self.get_call_events(self.player_id)
@@ -568,7 +568,7 @@ class Bot:
                 ...
             ]
         """
-        current_shanten = calc_shanten(self.tehai_tenhou)
+        current_shanten = calc_shanten(self.tehai)
         current_improving_tiles = self.find_improving_tiles()  # with 13 tiles
         current_ukeire = 0
         for current_improving in current_improving_tiles:
@@ -613,7 +613,7 @@ class Bot:
         new_tehai_mjai = self.tehai_mjai.copy()
         new_tehai_mjai.remove(consumed[0])
         new_tehai_mjai.remove(consumed[1])
-        new_call_str = _fmt_tenhou_call(
+        new_call_str = _fmt_short_call(
             {
                 "type": "pon",
                 "consumed": consumed,
@@ -624,7 +624,7 @@ class Bot:
             self.player_id,
         )
 
-        tehai_str = convert_tehai_vec34_as_tenhou(
+        tehai_str = convert_tehai_vec34_as_short(
             convert_mjai_tiles_to_vec34(new_tehai_mjai),
             self.player_state.akas_in_hand,
         )
@@ -683,7 +683,7 @@ class Bot:
         Examples:
             >>> bot.find_chi_candidates()
         """
-        current_shanten = calc_shanten(self.tehai_tenhou)
+        current_shanten = calc_shanten(self.tehai)
         current_improving_tiles = self.find_improving_tiles()  # with 13 tiles
         current_ukeire = 0
         for current_improving in current_improving_tiles:
@@ -819,7 +819,7 @@ class Bot:
         new_tehai_mjai = self.tehai_mjai.copy()
         new_tehai_mjai.remove(consumed[0])
         new_tehai_mjai.remove(consumed[1])
-        new_call_str = _fmt_tenhou_call(
+        new_call_str = _fmt_short_call(
             {
                 "type": "chi",
                 "consumed": consumed,
@@ -829,7 +829,7 @@ class Bot:
             },
             self.player_id,
         )
-        tehai_str = convert_tehai_vec34_as_tenhou(
+        tehai_str = convert_tehai_vec34_as_short(
             convert_mjai_tiles_to_vec34(new_tehai_mjai),
             self.player_state.akas_in_hand,
         )
@@ -887,7 +887,7 @@ class Bot:
         Find tiles that improve the hand.
 
         Example:
-            >>> bot.tehai_tenhou
+            >>> bot.tehai
             "1269m134p34579s56z"
 
             >>> ret = bot.find_improving_tiles()
@@ -924,7 +924,7 @@ class Bot:
                 return "5sr"
             return tile
 
-        candidates = find_improving_tiles(self.tehai_tenhou)
+        candidates = find_improving_tiles(self.tehai)
         candidates = list(
             sorted(candidates, key=lambda x: len(x[1]), reverse=True)
         )

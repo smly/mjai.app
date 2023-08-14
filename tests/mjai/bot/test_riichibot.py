@@ -9,7 +9,7 @@ def test_riichibot_without_1k_points():
         )
         == '{"type":"none"}'
     )
-    assert player.tehai_tenhou == ""
+    assert player.tehai == ""
 
     assert (
         player.react(
@@ -62,7 +62,7 @@ def test_riichibot_with_1k_points():
         )
         == '{"type":"none"}'
     )
-    assert player.tehai_tenhou == ""
+    assert player.tehai == ""
 
     assert (
         player.react(

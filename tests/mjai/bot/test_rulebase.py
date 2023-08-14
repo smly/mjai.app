@@ -43,7 +43,7 @@ def test_custom_bot():
     )
     assert player.last_kawa_tile == "P"
     assert player.last_self_tsumo == ""  # No tsumo events yet
-    assert player.tehai_tenhou == "129m134p4567s556z"
+    assert player.tehai == "129m134p4567s556z"
 
     assert (
         player.react(
@@ -55,7 +55,7 @@ def test_custom_bot():
         )
         == '{"type":"dahai","pai":"F","actor":0,"tsumogiri":false}'
     )
-    assert player.tehai_tenhou == "129m134p4567s6z(p5z3)"
+    assert player.tehai == "129m134p4567s6z(p5z3)"
 
     assert (
         player.react(
@@ -73,7 +73,7 @@ def test_custom_bot():
         )
         == '{"type":"chi","actor":0,"target":3,"pai":"2p","consumed":["3p","4p"]}'  # noqa
     )
-    assert player.tehai_tenhou == "129m134p4567s(p5z3)"
+    assert player.tehai == "129m134p4567s(p5z3)"
 
     assert (
         player.react(
@@ -83,7 +83,7 @@ def test_custom_bot():
         )
         == '{"type":"dahai","pai":"1p","actor":0,"tsumogiri":false}'
     )
-    assert player.tehai_tenhou == "129m1p4567s(p5z3)(234p0)"
+    assert player.tehai == "129m1p4567s(p5z3)(234p0)"
 
 
 def test_error_case():
@@ -248,7 +248,7 @@ def test_validation_tedashi_after_riichi():
         )
         == '{"type":"none"}'
     )
-    assert player.tehai_tenhou == ""
+    assert player.tehai == ""
 
     assert (
         player.react(
@@ -322,7 +322,7 @@ def test_validation_tedashi_before_riichi_accepted():
         )
         == '{"type":"none"}'
     )
-    assert player.tehai_tenhou == ""
+    assert player.tehai == ""
 
     assert (
         player.react(

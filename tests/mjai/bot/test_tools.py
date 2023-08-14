@@ -1,9 +1,9 @@
 import pytest
 from mjai.bot.tools import (
-    convert_tehai_vec34_as_tenhou,
+    convert_tehai_vec34_as_short,
     find_improving_tiles,
     vec34_index_to_mjai_tile,
-    vec34_index_to_tenhou_tile,
+    vec34_index_to_short_tile,
 )
 
 
@@ -29,12 +29,12 @@ def test_find_improving_tiles(tehai_vec34_random):
     assert len(ret) == 6
 
     # discard tiles
-    assert vec34_index_to_tenhou_tile(ret[0][0]) == "6m"
-    assert vec34_index_to_tenhou_tile(ret[1][0]) == "9m"
-    assert vec34_index_to_tenhou_tile(ret[2][0]) == "5z"
-    assert vec34_index_to_tenhou_tile(ret[3][0]) == "6z"
-    assert vec34_index_to_tenhou_tile(ret[4][0]) == "1p"
-    assert vec34_index_to_tenhou_tile(ret[5][0]) == "4p"
+    assert vec34_index_to_short_tile(ret[0][0]) == "6m"
+    assert vec34_index_to_short_tile(ret[1][0]) == "9m"
+    assert vec34_index_to_short_tile(ret[2][0]) == "5z"
+    assert vec34_index_to_short_tile(ret[3][0]) == "6z"
+    assert vec34_index_to_short_tile(ret[4][0]) == "1p"
+    assert vec34_index_to_short_tile(ret[5][0]) == "4p"
     assert vec34_index_to_mjai_tile(ret[3][0]) == "F"
     assert vec34_index_to_mjai_tile(ret[4][0]) == "1p"
     assert vec34_index_to_mjai_tile(ret[5][0]) == "4p"
@@ -52,15 +52,15 @@ def test_find_improving_tiles(tehai_vec34_random):
     ]
 
 
-def test_convert_tehai_vec34_as_tenhou(
+def test_convert_tehai_vec34_as_short(
     tehai_vec34_ryanpeikou_chanta, tehai_vec34_random
 ):
     assert (
-        convert_tehai_vec34_as_tenhou(tehai_vec34_ryanpeikou_chanta)
+        convert_tehai_vec34_as_short(tehai_vec34_ryanpeikou_chanta)
         == "112233m112233p77z"
     )
     assert (
-        convert_tehai_vec34_as_tenhou(tehai_vec34_random)
+        convert_tehai_vec34_as_short(tehai_vec34_random)
         == "113479m4p33556s47z"
     )
 
@@ -82,18 +82,18 @@ def test_vec34_index_to_mjai_tile():
     assert vec34_index_to_mjai_tile(33) == "C"
 
 
-def test_vec34_index_to_tenhou_tile():
-    assert vec34_index_to_tenhou_tile(0) == "1m"
-    assert vec34_index_to_tenhou_tile(4) == "5m"
-    assert vec34_index_to_tenhou_tile(8) == "9m"
-    assert vec34_index_to_tenhou_tile(9) == "1p"
-    assert vec34_index_to_tenhou_tile(17) == "9p"
-    assert vec34_index_to_tenhou_tile(18) == "1s"
-    assert vec34_index_to_tenhou_tile(26) == "9s"
-    assert vec34_index_to_tenhou_tile(27) == "1z"
-    assert vec34_index_to_tenhou_tile(28) == "2z"
-    assert vec34_index_to_tenhou_tile(29) == "3z"
-    assert vec34_index_to_tenhou_tile(30) == "4z"
-    assert vec34_index_to_tenhou_tile(31) == "5z"
-    assert vec34_index_to_tenhou_tile(32) == "6z"
-    assert vec34_index_to_tenhou_tile(33) == "7z"
+def test_vec34_index_to_short_tile():
+    assert vec34_index_to_short_tile(0) == "1m"
+    assert vec34_index_to_short_tile(4) == "5m"
+    assert vec34_index_to_short_tile(8) == "9m"
+    assert vec34_index_to_short_tile(9) == "1p"
+    assert vec34_index_to_short_tile(17) == "9p"
+    assert vec34_index_to_short_tile(18) == "1s"
+    assert vec34_index_to_short_tile(26) == "9s"
+    assert vec34_index_to_short_tile(27) == "1z"
+    assert vec34_index_to_short_tile(28) == "2z"
+    assert vec34_index_to_short_tile(29) == "3z"
+    assert vec34_index_to_short_tile(30) == "4z"
+    assert vec34_index_to_short_tile(31) == "5z"
+    assert vec34_index_to_short_tile(32) == "6z"
+    assert vec34_index_to_short_tile(33) == "7z"
