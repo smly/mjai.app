@@ -109,11 +109,51 @@ def fmt_tenhou_call(ev: dict, player_id: int) -> str:
         else:
             called_tile_idx = 2
         return f"({consecutive_nums}{color}{called_tile_idx})"
-    else:
-        # TODO: ankan, daiminkan, kakan
-
-        # Not supported yet.
-        return ""
+    elif ev["type"] in ["daiminkan"]:
+        rel_pos = (ev["target"] - player_id + 4) % 4
+        call_tiles = [
+            mjai_tile_to_tenhou(ev["pai"]),
+            mjai_tile_to_tenhou(ev["consumed"][0]),
+            mjai_tile_to_tenhou(ev["consumed"][1]),
+            mjai_tile_to_tenhou(ev["consumed"][2]),
+        ]
+        return "(k{}{}{})".format(
+            deaka_tenhou_tile(call_tiles[0]),
+            rel_pos,
+            "r"
+            if any([is_aka_tenhou_tile(tile) for tile in call_tiles])
+            else "",
+        )
+    elif ev["type"] in ["ankan"]:
+        rel_pos = (ev["target"] - player_id + 4) % 4
+        call_tiles = [
+            mjai_tile_to_tenhou(ev["consumed"][0]),
+            mjai_tile_to_tenhou(ev["consumed"][1]),
+            mjai_tile_to_tenhou(ev["consumed"][2]),
+            mjai_tile_to_tenhou(ev["consumed"][3]),
+        ]
+        return "(k{}{}{})".format(
+            deaka_tenhou_tile(call_tiles[0]),
+            rel_pos,
+            "r"
+            if any([is_aka_tenhou_tile(tile) for tile in call_tiles])
+            else "",
+        )
+    elif ev["type"] == "kakan":
+        rel_pos = (ev["target"] - player_id + 4) % 4
+        call_tiles = [
+            mjai_tile_to_tenhou(ev["pai"]),
+            mjai_tile_to_tenhou(ev["consumed"][0]),
+            mjai_tile_to_tenhou(ev["consumed"][1]),
+            mjai_tile_to_tenhou(ev["consumed"][2]),
+        ]
+        return "(s{}{}{})".format(
+            deaka_tenhou_tile(call_tiles[0]),
+            rel_pos,
+            "r"
+            if any([is_aka_tenhou_tile(tile) for tile in call_tiles])
+            else "",
+        )
 
 
 def is_aka_tenhou_tile(tile: str) -> bool:

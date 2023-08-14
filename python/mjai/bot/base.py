@@ -250,8 +250,6 @@ class Bot:
 
         ref: https://github.com/harphield/riichi-tools-rs#hand-representation-parsing  # noqa
 
-        TODO: ankan, kakan, daiminkan をサポートする
-
         Example:
             >>> bot.tehai_tenhou
             "1269m134p34579s56z"
@@ -413,6 +411,39 @@ class Bot:
             {
                 "type": "reach",
                 "actor": self.player_id,
+            },
+            separators=(",", ":"),
+        )
+
+    def action_ankan(self, consumed: list[str]) -> str:
+        return json.dumps(
+            {
+                "type": "ankan",
+                "actor": self.player_id,
+                "consumed": consumed,  # 4 tiles to be consumed
+            },
+            separators=(",", ":"),
+        )
+
+    def action_kakan(self, consumed: list[str]) -> str:
+        return json.dumps(
+            {
+                "type": "kakan",
+                "actor": self.player_id,
+                "pai": self.last_kawa_tile,
+                "consumed": consumed,  # 3 tiles to be consumed
+            },
+            separators=(",", ":"),
+        )
+
+    def action_daiminkan(self, consumed: list[str]) -> str:
+        return json.dumps(
+            {
+                "type": "daiminkan",
+                "actor": self.player_id,
+                "target": self.target_actor,
+                "pai": self.last_kawa_tile,
+                "consumed": consumed,  # 3 tiles to be consumed
             },
             separators=(",", ":"),
         )
