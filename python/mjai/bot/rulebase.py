@@ -38,7 +38,7 @@ class RulebaseBot(Bot):
 
         if self.can_discard:
             logger.info(
-                f"{self.bakaze}{self.kyoku}-{self.honba}: {self.tehai_tenhou}"
+                f"{self.bakaze}{self.kyoku}-{self.honba}: {self.tehai}"
             )
 
             # Tsumogiri only

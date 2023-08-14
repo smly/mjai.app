@@ -12,7 +12,7 @@ def test_find_improving_tiles():
         )
         == '{"type":"none"}'
     )
-    assert player.tehai_tenhou == ""
+    assert player.tehai == ""
 
     assert (
         player.react(
@@ -72,7 +72,7 @@ def test_tsumogiri_bot():
         )
         == '{"type":"none"}'
     )
-    assert bot.tehai_tenhou == ""
+    assert bot.tehai == ""
 
     assert (
         bot.react(
@@ -98,7 +98,7 @@ def test_tsumogiri_bot():
     )
     assert len(bot.tehai_mjai) == 14
     assert (
-        bot.tehai_tenhou == "1269m134p34579s56z"
+        bot.tehai == "1269m134p34579s56z"
     )  # NOTE: state just before last own reaction
     assert bot.is_oya is False
     assert bot.last_self_tsumo == "3s"
@@ -141,7 +141,7 @@ def test_custom_bot():
         )
         == '{"type":"none"}'
     )
-    assert player.tehai_tenhou == ""
+    assert player.tehai == ""
 
     assert (
         player.react(
@@ -167,7 +167,7 @@ def test_custom_bot():
     )
     assert player.last_kawa_tile == "1m"
     assert player.last_self_tsumo == "P"
-    assert player.tehai_tenhou == "1269m134p4579s556z"
+    assert player.tehai == "1269m134p4579s556z"
 
 
 def test_tehai_mjai_with_akadora():
@@ -178,6 +178,6 @@ def test_tehai_mjai_with_akadora():
     bot = Bot(player_id=1)
     for line in lines:
         bot.react(line)
-    assert bot.tehai_tenhou == "88m44p0788s113445z"
+    assert bot.tehai == "88m44p0788s113445z"
     assert "5sr" in bot.tehai_mjai
     assert "5s" not in bot.tehai_mjai

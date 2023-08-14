@@ -18,13 +18,13 @@ def convert_mjai_tiles_to_vec34(
     return vec34_tiles
 
 
-def convert_tehai_vec34_as_tenhou(
+def convert_tehai_vec34_as_short(
     tehai_vec34: list[int], akas_in_hand: list[bool] | None = None
 ) -> str:
     """
-    Convert tehai_vec34 to tenhou.net/2 format
+    Convert tehai_vec34 to short format
 
-    NOTE: Open shapes are not supported.
+    NOTE: Open shapes are ignored
     """
     ms, ps, ss, zis = [], [], [], []
     shortline_elems = []
@@ -78,7 +78,7 @@ def fmt_calls(events: list[dict], player_id: int) -> str:
     kakan_calls = []
 
     for ev in events:
-        call = _fmt_tenhou_call(ev, player_id)
+        call = _fmt_short_call(ev, player_id)
         if ev["type"] == "kakan":
             kakan_calls.append(call)
         elif ev["type"] in ["chi", "pon", "daiminkan", "ankan"]:
@@ -96,19 +96,19 @@ def fmt_calls(events: list[dict], player_id: int) -> str:
     return "".join(calls)
 
 
-def _fmt_tenhou_call(ev: dict, player_id: int) -> str:
+def _fmt_short_call(ev: dict, player_id: int) -> str:
     if ev["type"] == "pon":
         rel_pos = (ev["target"] - player_id + 4) % 4
         call_tiles = [
-            mjai_tile_to_tenhou(ev["pai"]),
-            mjai_tile_to_tenhou(ev["consumed"][0]),
-            mjai_tile_to_tenhou(ev["consumed"][1]),
+            mjai_tile_to_short(ev["pai"]),
+            mjai_tile_to_short(ev["consumed"][0]),
+            mjai_tile_to_short(ev["consumed"][1]),
         ]
         return "(p{}{}{})".format(
-            deaka_tenhou_tile(call_tiles[0]),
+            deaka_short_tile(call_tiles[0]),
             rel_pos,
             "r"
-            if any([is_aka_tenhou_tile(tile) for tile in call_tiles])
+            if any([is_aka_short_tile(tile) for tile in call_tiles])
             else "",
         )
     elif ev["type"] == "chi":
@@ -117,17 +117,17 @@ def _fmt_tenhou_call(ev: dict, player_id: int) -> str:
             list(
                 sorted(
                     [
-                        mjai_tile_to_tenhou(ev["pai"])[0],
-                        mjai_tile_to_tenhou(ev["consumed"][0])[0],
-                        mjai_tile_to_tenhou(ev["consumed"][1])[0],
+                        mjai_tile_to_short(ev["pai"])[0],
+                        mjai_tile_to_short(ev["consumed"][0])[0],
+                        mjai_tile_to_short(ev["consumed"][1])[0],
                     ]
                 )
             )
         )
         called_tile_idx = 0
-        if consecutive_nums[0] == mjai_tile_to_tenhou(ev["pai"])[0]:
+        if consecutive_nums[0] == mjai_tile_to_short(ev["pai"])[0]:
             called_tile_idx = 0
-        elif consecutive_nums[1] == mjai_tile_to_tenhou(ev["pai"])[0]:
+        elif consecutive_nums[1] == mjai_tile_to_short(ev["pai"])[0]:
             called_tile_idx = 1
         else:
             called_tile_idx = 2
@@ -135,62 +135,62 @@ def _fmt_tenhou_call(ev: dict, player_id: int) -> str:
     elif ev["type"] in ["daiminkan"]:
         rel_pos = (ev["target"] - player_id + 4) % 4
         call_tiles = [
-            mjai_tile_to_tenhou(ev["pai"]),
-            mjai_tile_to_tenhou(ev["consumed"][0]),
-            mjai_tile_to_tenhou(ev["consumed"][1]),
-            mjai_tile_to_tenhou(ev["consumed"][2]),
+            mjai_tile_to_short(ev["pai"]),
+            mjai_tile_to_short(ev["consumed"][0]),
+            mjai_tile_to_short(ev["consumed"][1]),
+            mjai_tile_to_short(ev["consumed"][2]),
         ]
         return "(k{}{}{})".format(
-            deaka_tenhou_tile(call_tiles[0]),
+            deaka_short_tile(call_tiles[0]),
             rel_pos,
             "r"
-            if any([is_aka_tenhou_tile(tile) for tile in call_tiles])
+            if any([is_aka_short_tile(tile) for tile in call_tiles])
             else "",
         )
     elif ev["type"] in ["ankan"]:
         rel_pos = (ev["target"] - player_id + 4) % 4
         call_tiles = [
-            mjai_tile_to_tenhou(ev["consumed"][0]),
-            mjai_tile_to_tenhou(ev["consumed"][1]),
-            mjai_tile_to_tenhou(ev["consumed"][2]),
-            mjai_tile_to_tenhou(ev["consumed"][3]),
+            mjai_tile_to_short(ev["consumed"][0]),
+            mjai_tile_to_short(ev["consumed"][1]),
+            mjai_tile_to_short(ev["consumed"][2]),
+            mjai_tile_to_short(ev["consumed"][3]),
         ]
         return "(k{}{}{})".format(
-            deaka_tenhou_tile(call_tiles[0]),
+            deaka_short_tile(call_tiles[0]),
             rel_pos,
             "r"
-            if any([is_aka_tenhou_tile(tile) for tile in call_tiles])
+            if any([is_aka_short_tile(tile) for tile in call_tiles])
             else "",
         )
     elif ev["type"] == "kakan":
         rel_pos = 0  # NOTE: `rel_pose` will be replaced in `fmt_calls`
 
         call_tiles = [
-            mjai_tile_to_tenhou(ev["pai"]),
-            mjai_tile_to_tenhou(ev["consumed"][0]),
-            mjai_tile_to_tenhou(ev["consumed"][1]),
-            mjai_tile_to_tenhou(ev["consumed"][2]),
+            mjai_tile_to_short(ev["pai"]),
+            mjai_tile_to_short(ev["consumed"][0]),
+            mjai_tile_to_short(ev["consumed"][1]),
+            mjai_tile_to_short(ev["consumed"][2]),
         ]
         return "(s{}{}{})".format(
-            deaka_tenhou_tile(call_tiles[0]),
+            deaka_short_tile(call_tiles[0]),
             rel_pos,
             "r"
-            if any([is_aka_tenhou_tile(tile) for tile in call_tiles])
+            if any([is_aka_short_tile(tile) for tile in call_tiles])
             else "",
         )
     else:
         return ""
 
 
-def is_aka_tenhou_tile(tile: str) -> bool:
+def is_aka_short_tile(tile: str) -> bool:
     return tile in ["0m", "0p", "0s"]
 
 
-def deaka_tenhou_tile(tile: str) -> str:
-    return f"5{tile[1]}" if is_aka_tenhou_tile(tile) else tile
+def deaka_short_tile(tile: str) -> str:
+    return f"5{tile[1]}" if is_aka_short_tile(tile) else tile
 
 
-def mjai_tile_to_tenhou(tile: str) -> str:
+def mjai_tile_to_short(tile: str) -> str:
     mapping = {
         "5mr": "0m",
         "5pr": "0s",
@@ -206,14 +206,14 @@ def mjai_tile_to_tenhou(tile: str) -> str:
     return mapping.get(tile, tile)
 
 
-def vec34_index_to_tenhou_tile(index: int) -> str:
+def vec34_index_to_short_tile(index: int) -> str:
     """
-    Vec34 index to tenhou.net/2 format
+    Vec34 index to short format
 
     Example:
-        >>> vec34_index_to_tenhou_tile(0)
+        >>> vec34_index_to_short_tile(0)
         "1m"
-        >>> vec34_index_to_tenhou_tile(33)
+        >>> vec34_index_to_short_tile(33)
         "7z"
     """
     if index < 0 or index > 33:
@@ -263,9 +263,9 @@ def vec34_index_to_mjai_tile(index: int) -> str:
     Vec34 index to mjai format
 
     Example:
-        >>> vec34_index_to_tenhou_tile(0)
+        >>> vec34_index_to_mjai_tile(0)
         "1m"
-        >>> vec34_index_to_tenhou_tile(33)
+        >>> vec34_index_to_mjai_tile(33)
         "C"
     """
     if index < 0 or index > 33:
