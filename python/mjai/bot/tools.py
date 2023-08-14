@@ -73,7 +73,30 @@ def convert_tehai_vec34_as_tenhou(
     return "".join(shortline_elems)
 
 
-def fmt_tenhou_call(ev: dict, player_id: int) -> str:
+def fmt_calls(events: list[dict], player_id: int) -> str:
+    calls = []
+    kakan_calls = []
+
+    for ev in events:
+        call = _fmt_tenhou_call(ev, player_id)
+        if ev["type"] == "kakan":
+            kakan_calls.append(call)
+        elif ev["type"] in ["chi", "pon", "daiminkan", "ankan"]:
+            calls.append(call)
+
+    for kakan_call in kakan_calls:
+        tile = kakan_call[2:4]
+        for i, call in enumerate(calls):
+            if call[2:4] == tile and call[1] == "p":
+                rel_pose = call[4]
+                kakan_call[4] = rel_pose
+                calls[i] = kakan_call
+                break
+
+    return "".join(calls)
+
+
+def _fmt_tenhou_call(ev: dict, player_id: int) -> str:
     if ev["type"] == "pon":
         rel_pos = (ev["target"] - player_id + 4) % 4
         call_tiles = [
@@ -109,10 +132,53 @@ def fmt_tenhou_call(ev: dict, player_id: int) -> str:
         else:
             called_tile_idx = 2
         return f"({consecutive_nums}{color}{called_tile_idx})"
-    else:
-        # TODO: ankan, daiminkan, kakan
+    elif ev["type"] in ["daiminkan"]:
+        rel_pos = (ev["target"] - player_id + 4) % 4
+        call_tiles = [
+            mjai_tile_to_tenhou(ev["pai"]),
+            mjai_tile_to_tenhou(ev["consumed"][0]),
+            mjai_tile_to_tenhou(ev["consumed"][1]),
+            mjai_tile_to_tenhou(ev["consumed"][2]),
+        ]
+        return "(k{}{}{})".format(
+            deaka_tenhou_tile(call_tiles[0]),
+            rel_pos,
+            "r"
+            if any([is_aka_tenhou_tile(tile) for tile in call_tiles])
+            else "",
+        )
+    elif ev["type"] in ["ankan"]:
+        rel_pos = (ev["target"] - player_id + 4) % 4
+        call_tiles = [
+            mjai_tile_to_tenhou(ev["consumed"][0]),
+            mjai_tile_to_tenhou(ev["consumed"][1]),
+            mjai_tile_to_tenhou(ev["consumed"][2]),
+            mjai_tile_to_tenhou(ev["consumed"][3]),
+        ]
+        return "(k{}{}{})".format(
+            deaka_tenhou_tile(call_tiles[0]),
+            rel_pos,
+            "r"
+            if any([is_aka_tenhou_tile(tile) for tile in call_tiles])
+            else "",
+        )
+    elif ev["type"] == "kakan":
+        rel_pos = 0  # NOTE: `rel_pose` will be replaced in `fmt_calls`
 
-        # Not supported yet.
+        call_tiles = [
+            mjai_tile_to_tenhou(ev["pai"]),
+            mjai_tile_to_tenhou(ev["consumed"][0]),
+            mjai_tile_to_tenhou(ev["consumed"][1]),
+            mjai_tile_to_tenhou(ev["consumed"][2]),
+        ]
+        return "(s{}{}{})".format(
+            deaka_tenhou_tile(call_tiles[0]),
+            rel_pos,
+            "r"
+            if any([is_aka_tenhou_tile(tile) for tile in call_tiles])
+            else "",
+        )
+    else:
         return ""
 
 

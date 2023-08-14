@@ -25,6 +25,9 @@ def test_regular_game():
                     Path(dirpath) / f"0.player{player_idx}.stdout.log"
                 ).exists()
 
+            print((Path(dirpath) / "0.player1.stdout.log").open("r").read())
+            print((Path(dirpath) / "0.player1.stderr.log").open("r").read())
+
             assert (Path(dirpath) / "0.game.error.json").exists()
             assert (Path(dirpath) / "0.game.error.json").open(
                 "r"

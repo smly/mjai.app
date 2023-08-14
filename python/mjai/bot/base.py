@@ -3,9 +3,10 @@ import sys
 
 from mjai.bot.consts import MJAI_VEC34_TILES
 from mjai.bot.tools import (
+    _fmt_tenhou_call,
     convert_mjai_tiles_to_vec34,
     convert_tehai_vec34_as_tenhou,
-    fmt_tenhou_call,
+    fmt_calls,
     vec34_index_to_mjai_tile,
 )
 from mjai.mlibriichi.state import ActionCandidate, PlayerState  # type: ignore
@@ -250,8 +251,6 @@ class Bot:
 
         ref: https://github.com/harphield/riichi-tools-rs#hand-representation-parsing  # noqa
 
-        TODO: ankan, kakan, daiminkan をサポートする
-
         Example:
             >>> bot.tehai_tenhou
             "1269m134p34579s56z"
@@ -265,10 +264,10 @@ class Bot:
         tehai_str = convert_tehai_vec34_as_tenhou(
             self.player_state.tehai, self.player_state.akas_in_hand
         )
-        for ev in self.get_call_events(self.player_id):
-            tehai_str += fmt_tenhou_call(ev, self.player_id)
+        events = self.get_call_events(self.player_id)
+        call_str = fmt_calls(events, self.player_id)
 
-        return tehai_str
+        return tehai_str + call_str
 
     @property
     def akas_in_hand(self) -> list[bool]:
@@ -413,6 +412,39 @@ class Bot:
             {
                 "type": "reach",
                 "actor": self.player_id,
+            },
+            separators=(",", ":"),
+        )
+
+    def action_ankan(self, consumed: list[str]) -> str:
+        return json.dumps(
+            {
+                "type": "ankan",
+                "actor": self.player_id,
+                "consumed": consumed,  # 4 tiles to be consumed
+            },
+            separators=(",", ":"),
+        )
+
+    def action_kakan(self, consumed: list[str]) -> str:
+        return json.dumps(
+            {
+                "type": "kakan",
+                "actor": self.player_id,
+                "pai": self.last_kawa_tile,
+                "consumed": consumed,  # 3 tiles to be consumed
+            },
+            separators=(",", ":"),
+        )
+
+    def action_daiminkan(self, consumed: list[str]) -> str:
+        return json.dumps(
+            {
+                "type": "daiminkan",
+                "actor": self.player_id,
+                "target": self.target_actor,
+                "pai": self.last_kawa_tile,
+                "consumed": consumed,  # 3 tiles to be consumed
             },
             separators=(",", ":"),
         )
@@ -581,7 +613,7 @@ class Bot:
         new_tehai_mjai = self.tehai_mjai.copy()
         new_tehai_mjai.remove(consumed[0])
         new_tehai_mjai.remove(consumed[1])
-        new_call_str = fmt_tenhou_call(
+        new_call_str = _fmt_tenhou_call(
             {
                 "type": "pon",
                 "consumed": consumed,
@@ -596,8 +628,9 @@ class Bot:
             convert_mjai_tiles_to_vec34(new_tehai_mjai),
             self.player_state.akas_in_hand,
         )
-        for ev in self.get_call_events(self.player_id):
-            tehai_str += fmt_tenhou_call(ev, self.player_id)
+        events = self.get_call_events(self.player_id)
+        call_str = fmt_calls(events, self.player_id)
+        tehai_str = tehai_str + call_str
 
         new_shanten = calc_shanten(tehai_str + new_call_str)
 
@@ -786,7 +819,7 @@ class Bot:
         new_tehai_mjai = self.tehai_mjai.copy()
         new_tehai_mjai.remove(consumed[0])
         new_tehai_mjai.remove(consumed[1])
-        new_call_str = fmt_tenhou_call(
+        new_call_str = _fmt_tenhou_call(
             {
                 "type": "chi",
                 "consumed": consumed,
@@ -796,13 +829,13 @@ class Bot:
             },
             self.player_id,
         )
-
         tehai_str = convert_tehai_vec34_as_tenhou(
             convert_mjai_tiles_to_vec34(new_tehai_mjai),
             self.player_state.akas_in_hand,
         )
-        for ev in self.get_call_events(self.player_id):
-            tehai_str += fmt_tenhou_call(ev, self.player_id)
+        events = self.get_call_events(self.player_id)
+        call_str = fmt_calls(events, self.player_id)
+        tehai_str = tehai_str + call_str
 
         new_shanten = calc_shanten(tehai_str + new_call_str)
 
