@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 from mjai import Bot
 
@@ -167,3 +168,16 @@ def test_custom_bot():
     assert player.last_kawa_tile == "1m"
     assert player.last_self_tsumo == "P"
     assert player.tehai_tenhou == "1269m134p4579s556z"
+
+
+def test_tehai_mjai_with_akadora():
+    lines = [
+        line.strip()
+        for line in Path("tests/mjai/bot/data_base_akadora.log").open("r")
+    ]
+    bot = Bot(player_id=1)
+    for line in lines:
+        bot.react(line)
+    assert bot.tehai_tenhou == "88m44p0788s113445z"
+    assert "5sr" in bot.tehai_mjai
+    assert "5s" not in bot.tehai_mjai
