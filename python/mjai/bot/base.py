@@ -507,6 +507,15 @@ class Bot:
                     json.dumps(event)
                 )
 
+            # NOTE: Skip `think()` if the player's riichi is accepted and
+            # no call actions are allowed.
+            if (
+                self.self_riichi_accepted
+                and not (self.can_agari or self.can_kakan or self.can_ankan)
+                and self.can_discard
+            ):
+                return self.action_discard(self.last_self_tsumo)
+
             resp = self.think()
             return resp
 
