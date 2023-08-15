@@ -1,7 +1,53 @@
 import json
 from pathlib import Path
 
+from mock import MagicMock
+
 from mjai import Bot
+
+
+def test_tehai_mjai():
+    bot = Bot(player_id=0)
+    bot.player_state = MagicMock()
+    bot.player_state.tehai = [
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+    ]
+    bot.player_state.akas_in_hand = [True, False, False]
+    assert "5m" in bot.tehai_mjai
+    assert "5mr" in bot.tehai_mjai
 
 
 def test_find_improving_tiles():
