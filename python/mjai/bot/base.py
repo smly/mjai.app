@@ -124,7 +124,7 @@ class Bot:
         """
         Relative position of target actor.
 
-        0 = shimocha, 2 = toimen, 3 = kamicha.
+        1 = shimocha, 2 = toimen, 3 = kamicha.
         """
         return (self.target_actor - self.player_id + 4) % 4
 
@@ -161,7 +161,7 @@ class Bot:
         Last tile that the player drew by itself.
 
         Tile format is mjai-style like '5mr' or 'P'.
-        Return a empty string when the player's first action is not tsumo.
+        Return a empty string when the player's last action is not tsumo.
         """
         return self.player_state.last_self_tsumo() or ""
 
