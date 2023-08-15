@@ -37,6 +37,32 @@ def test_tehai_mjai():
     assert bot.tehai_mjai.count("5m") == 3
     assert bot.tehai_mjai.count("5mr") == 0
 
+    # Case4
+    bot.player_state.tehai = list(
+        map(int, list("1111311110000100000000100000000000"))
+    )
+    bot.player_state.akas_in_hand = [False, False, False]
+    assert bot.tehai == "12345556789m5p5s"
+    assert bot.tehai_mjai.count("5m") == 3
+    assert bot.tehai_mjai.count("5mr") == 0
+    assert bot.tehai_mjai.count("5p") == 1
+    assert bot.tehai_mjai.count("5pr") == 0
+    assert bot.tehai_mjai.count("5s") == 1
+    assert bot.tehai_mjai.count("5sr") == 0
+
+    # Case5
+    bot.player_state.tehai = list(
+        map(int, list("1111311110000100000000100000000000"))
+    )
+    bot.player_state.akas_in_hand = [False, False, True]
+    assert bot.tehai == "12345556789m5p0s"
+    assert bot.tehai_mjai.count("5m") == 3
+    assert bot.tehai_mjai.count("5mr") == 0
+    assert bot.tehai_mjai.count("5p") == 1
+    assert bot.tehai_mjai.count("5pr") == 0
+    assert bot.tehai_mjai.count("5s") == 0
+    assert bot.tehai_mjai.count("5sr") == 1
+
 
 def test_find_improving_tiles():
     player = Bot(player_id=0)
