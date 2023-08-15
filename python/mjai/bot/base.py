@@ -3,15 +3,15 @@ import sys
 
 from mjai.bot.consts import MJAI_VEC34_TILES
 from mjai.bot.tools import (
+    calc_shanten,
     convert_mjai_to_vec34,
     convert_vec34_to_short,
+    find_improving_tiles,
     fmt_call,
     fmt_calls,
     vec34_index_to_mjai_tile,
 )
 from mjai.mlibriichi.state import ActionCandidate, PlayerState  # type: ignore
-from mjai.mlibriichi.tools import calc_shanten  # type: ignore
-from mjai.mlibriichi.tools import find_improving_tiles  # type: ignore
 
 
 class Bot:
