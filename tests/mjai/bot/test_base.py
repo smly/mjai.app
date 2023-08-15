@@ -9,45 +9,33 @@ from mjai import Bot
 def test_tehai_mjai():
     bot = Bot(player_id=0)
     bot.player_state = MagicMock()
-    bot.player_state.tehai = [
-        1,
-        1,
-        1,
-        1,
-        2,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        2,
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-    ]
+
+    # Case1
+    bot.player_state.tehai = list(
+        map(int, list("1111111110000000000000000000000000"))
+    )
     bot.player_state.akas_in_hand = [True, False, False]
-    assert "5m" in bot.tehai_mjai
-    assert "5mr" in bot.tehai_mjai
+    assert bot.tehai == "123406789m"
+    assert bot.tehai_mjai.count("5m") == 0
+    assert bot.tehai_mjai.count("5mr") == 1
+
+    # Case2
+    bot.player_state.tehai = list(
+        map(int, list("1111211110000000000000000000000000"))
+    )
+    bot.player_state.akas_in_hand = [True, False, False]
+    assert bot.tehai == "1234056789m"
+    assert bot.tehai_mjai.count("5m") == 1
+    assert bot.tehai_mjai.count("5mr") == 1
+
+    # Case3
+    bot.player_state.tehai = list(
+        map(int, list("1111311110000000000000000000000000"))
+    )
+    bot.player_state.akas_in_hand = [False, False, False]
+    assert bot.tehai == "12345556789m"
+    assert bot.tehai_mjai.count("5m") == 3
+    assert bot.tehai_mjai.count("5mr") == 0
 
 
 def test_find_improving_tiles():

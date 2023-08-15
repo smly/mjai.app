@@ -206,30 +206,21 @@ class Bot:
             ["1m", "2m", "6m", "9m", "1p", "3p", "4p", "3s", "4s", "5s",
              "7s", "9s", "5z", "6z"]
         """
-        zi_map = ["E", "S", "W", "N", "P", "F", "C"]
-        ms, ps, ss, zis, akas = [], [], [], [], []
         tiles = []
         for tile_idx, tile_count in enumerate(self.player_state.tehai):
-            if tile_count and tile_idx == 4 and self.akas_in_hand[0]:
-                akas.append("5mr")
-                ms += [f"{tile_idx + 1}m"] * tile_count
-            elif tile_count and tile_idx == 4 + 9 and self.akas_in_hand[1]:
-                akas.append("5pr")
-                ps += [f"{tile_idx + 1}m"] * tile_count
-            elif tile_count and tile_idx == 4 + 18 and self.akas_in_hand[2]:
-                akas.append("5sr")
-                ss += [f"{tile_idx + 1}m"] * tile_count
-            elif tile_count and tile_idx < 9:
-                ms += [f"{tile_idx + 1}m"] * tile_count
-            elif tile_count and tile_idx < 18:
-                ps += [f"{tile_idx - 9 + 1}p"] * tile_count
-            elif tile_count and tile_idx < 27:
-                ss += [f"{tile_idx - 18 + 1}s"] * tile_count
-            else:
-                for _ in range(tile_count):
-                    zis.append(zi_map[tile_idx - 27])
+            if tile_idx == 4 and self.akas_in_hand[0]:
+                tile_count -= 1
+                tiles.append("5mr")
+            elif tile_idx == 4 + 9 and self.akas_in_hand[1]:
+                tile_count -= 1
+                tiles.append("5pr")
+            elif tile_idx == 4 + 18 and self.akas_in_hand[2]:
+                tile_count -= 1
+                tiles.append("5sr")
 
-        tiles = ms + ps + ss + zis + akas
+            for _ in range(tile_count):
+                tiles.append(MJAI_VEC34_TILES[tile_idx])
+
         return tiles
 
     @property
