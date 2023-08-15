@@ -156,6 +156,9 @@ def test_tsumogiri_bot():
         )
         == '{"type":"dahai","pai":"3s","actor":0,"tsumogiri":true}'
     )
+    assert bot.tiles_seen["F"] == 2  # actor1's tehai and actor0's dahai
+    assert bot.tiles_seen["3m"] == 1  # actor3's dahai
+
     assert len(bot.tehai_mjai) == 14
     assert (
         bot.tehai == "1269m134p34579s56z"

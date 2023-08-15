@@ -324,6 +324,13 @@ class Bot:
 
     @property
     def scores(self) -> list[int]:
+        """
+        Current scores of the players.
+
+        Example:
+            >>> bot.scores
+            [25000, 25000, 25000, 25000]
+        """
         return self.player_state.scores
 
     @property
@@ -340,12 +347,34 @@ class Bot:
 
     @property
     def tiles_seen(self) -> dict[str, int]:
+        """
+        Observable number of tiles from the player.
+
+        Including:
+        - Dora indicator tiles
+        - Tiles in the player's hand
+        - Tiles discarded by opponents
+        - Open tiles
+
+        Example:
+            >>> bot.tiles_seen
+            {"1m": 2, "2m": 1, "3m": 3, ...}
+        """
         assert self.player_state.tiles_seen is not None
         assert len(self.player_state.tiles_seen) == len(MJAI_VEC34_TILES)
         return dict(zip(MJAI_VEC34_TILES, self.player_state.tiles_seen))
 
     @property
     def forbidden_tiles(self) -> dict[str, bool]:
+        """
+        Forbidden tiles to discard by Kuikae (喰い替え; swap calling) rule.
+
+        ref: https://riichi.wiki/Kuikae
+
+        Example:
+            >>> bot.forbidden_tiles
+            {"1m": False, "2m": Fales, "3m": False, ...}
+        """
         assert self.player_state.forbidden_tiles is not None
         assert len(self.player_state.forbidden_tiles) == len(MJAI_VEC34_TILES)
         return dict(zip(MJAI_VEC34_TILES, self.player_state.forbidden_tiles))
