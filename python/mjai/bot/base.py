@@ -3,15 +3,15 @@ import sys
 
 from mjai.bot.consts import MJAI_VEC34_TILES
 from mjai.bot.tools import (
-    _fmt_short_call,
-    convert_mjai_tiles_to_vec34,
-    convert_tehai_vec34_as_short,
+    calc_shanten,
+    convert_mjai_to_vec34,
+    convert_vec34_to_short,
+    find_improving_tiles,
+    fmt_call,
     fmt_calls,
     vec34_index_to_mjai_tile,
 )
 from mjai.mlibriichi.state import ActionCandidate, PlayerState  # type: ignore
-from mjai.mlibriichi.tools import calc_shanten  # type: ignore
-from mjai.mlibriichi.tools import find_improving_tiles  # type: ignore
 
 
 class Bot:
@@ -255,7 +255,7 @@ class Bot:
             >>> bot.tehai
             "123m134p4567s6z(p5z3)"
         """
-        tehai_str = convert_tehai_vec34_as_short(
+        tehai_str = convert_vec34_to_short(
             self.player_state.tehai, self.player_state.akas_in_hand
         )
         events = self.get_call_events(self.player_id)
@@ -282,6 +282,55 @@ class Bot:
         0 indicates tenpai.
         """
         return self.player_state.shanten - 1
+
+    @property
+    def discardable_tiles(self) -> list[str]:
+        """
+        List of discardable tiles.
+
+        Example:
+            >>> bot.discardable_tiles
+            ["1m", "2m", "6m", "9m", "1p", "3p", "4p", "3s", "4s", "5s",
+             "7s", "9s", "5z", "6z"]
+        """
+        discardable_tiles = list(
+            set(
+                [
+                    tile
+                    for tile in self.tehai_mjai
+                    if not self.forbidden_tiles[tile]
+                ]
+            )
+        )
+        return discardable_tiles
+
+    @property
+    def discardable_tiles_riichi_declaration(self) -> list[str]:
+        """
+        List of discardable tiles just after riichi declaration.
+
+        Example:
+            >>> bot.discardable_tiles_riichi_declaration
+            ["1m", "6m"]
+        """
+        discardable_tiles = list(
+            set(
+                [
+                    tile
+                    for idx, tile in enumerate(self.tehai_mjai)
+                    if calc_shanten(
+                        convert_vec34_to_short(
+                            convert_mjai_to_vec34(
+                                self.tehai_mjai[:idx]
+                                + self.tehai_mjai[idx + 1 :]  # noqa
+                            )
+                        )
+                    )
+                    == 0
+                ]
+            )
+        )
+        return discardable_tiles
 
     # ==========================================================
     # table state
@@ -496,6 +545,9 @@ class Bot:
             separators=(",", ":"),
         )
 
+    # ==========================================================
+    # main
+
     def think(self) -> str:
         """
         Logic part of the bot.
@@ -645,7 +697,7 @@ class Bot:
         new_tehai_mjai = self.tehai_mjai.copy()
         new_tehai_mjai.remove(consumed[0])
         new_tehai_mjai.remove(consumed[1])
-        new_call_str = _fmt_short_call(
+        new_call_str = fmt_call(
             {
                 "type": "pon",
                 "consumed": consumed,
@@ -656,8 +708,8 @@ class Bot:
             self.player_id,
         )
 
-        tehai_str = convert_tehai_vec34_as_short(
-            convert_mjai_tiles_to_vec34(new_tehai_mjai),
+        tehai_str = convert_vec34_to_short(
+            convert_mjai_to_vec34(new_tehai_mjai),
             self.player_state.akas_in_hand,
         )
         events = self.get_call_events(self.player_id)
@@ -851,7 +903,7 @@ class Bot:
         new_tehai_mjai = self.tehai_mjai.copy()
         new_tehai_mjai.remove(consumed[0])
         new_tehai_mjai.remove(consumed[1])
-        new_call_str = _fmt_short_call(
+        new_call_str = fmt_call(
             {
                 "type": "chi",
                 "consumed": consumed,
@@ -861,8 +913,8 @@ class Bot:
             },
             self.player_id,
         )
-        tehai_str = convert_tehai_vec34_as_short(
-            convert_mjai_tiles_to_vec34(new_tehai_mjai),
+        tehai_str = convert_vec34_to_short(
+            convert_mjai_to_vec34(new_tehai_mjai),
             self.player_state.akas_in_hand,
         )
         events = self.get_call_events(self.player_id)

@@ -1,6 +1,6 @@
 import pytest
 from mjai.bot.tools import (
-    convert_tehai_vec34_as_short,
+    convert_vec34_to_short,
     find_improving_tiles,
     vec34_index_to_mjai_tile,
     vec34_index_to_short_tile,
@@ -56,13 +56,10 @@ def test_convert_tehai_vec34_as_short(
     tehai_vec34_ryanpeikou_chanta, tehai_vec34_random
 ):
     assert (
-        convert_tehai_vec34_as_short(tehai_vec34_ryanpeikou_chanta)
+        convert_vec34_to_short(tehai_vec34_ryanpeikou_chanta)
         == "112233m112233p77z"
     )
-    assert (
-        convert_tehai_vec34_as_short(tehai_vec34_random)
-        == "113479m4p33556s47z"
-    )
+    assert convert_vec34_to_short(tehai_vec34_random) == "113479m4p33556s47z"
 
 
 def test_vec34_index_to_mjai_tile():
