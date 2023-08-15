@@ -6,6 +6,74 @@ from mock import MagicMock
 from mjai import Bot
 
 
+def test_discardable():
+    bot = Bot(player_id=0)
+
+    # Case1: kuikae example from https://riichi.wiki/Kuikae
+    bot.player_state = MagicMock()
+    bot.player_state.tehai = list(
+        map(int, list("00000011111100000021110000000000000"))
+    )
+    bot.player_state.akas_in_hand = [False, False, False]
+    bot.player_state.forbidden_tiles = [
+        x == "1" for x in list("0000001000000000000000000000000000")
+    ]
+    # 7m is forbidden to discard
+    assert bot.tehai == "789m123p11234s"
+    print(bot.tehai_mjai)
+    print(bot.forbidden_tiles)
+    print(bot.discardable_tiles)
+    assert set(bot.discardable_tiles) == set(
+        [
+            "8m",
+            "9m",
+            "1p",
+            "2p",
+            "3p",
+            "1s",
+            "2s",
+            "3s",
+            "4s",
+        ]
+    )
+
+
+def test_discardable_tiles_riichi_declaration():
+    bot = Bot(player_id=0)
+
+    # Case1: after tenpai
+    bot.player_state = MagicMock()
+    bot.player_state.tehai = list(
+        map(int, list("0000111001110000002111000000030000"))
+    )
+    bot.player_state.akas_in_hand = [False, False, False]
+    assert bot.tehai == "567m123p11234s333z"
+    assert bot.tehai_mjai.count("5m") == 1
+    assert bot.tehai_mjai.count("5mr") == 0
+    assert bot.tehai_mjai.count("W") == 3
+    assert len(bot.discardable_tiles_riichi_declaration) == 11
+
+    # Case2: before tenpai
+    bot.player_state = MagicMock()
+    bot.player_state.tehai = list(
+        map(int, list("0000111001110000000111110000030000"))
+    )
+    bot.player_state.akas_in_hand = [False, False, False]
+    assert bot.tehai == "567m123p23456s333z"
+    assert bot.tehai_mjai.count("5m") == 1
+    assert bot.tehai_mjai.count("5mr") == 0
+    assert bot.tehai_mjai.count("W") == 3
+    assert set(bot.discardable_tiles_riichi_declaration) == set(
+        [
+            "2s",
+            "3s",
+            "5s",
+            "6s",
+            "W",
+        ]
+    )
+
+
 def test_tehai_mjai():
     bot = Bot(player_id=0)
     bot.player_state = MagicMock()

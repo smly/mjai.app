@@ -283,6 +283,55 @@ class Bot:
         """
         return self.player_state.shanten - 1
 
+    @property
+    def discardable_tiles(self) -> list[str]:
+        """
+        List of discardable tiles.
+
+        Example:
+            >>> bot.discardable_tiles
+            ["1m", "2m", "6m", "9m", "1p", "3p", "4p", "3s", "4s", "5s",
+             "7s", "9s", "5z", "6z"]
+        """
+        discardable_tiles = list(
+            set(
+                [
+                    tile
+                    for tile in self.tehai_mjai
+                    if not self.forbidden_tiles[tile]
+                ]
+            )
+        )
+        return discardable_tiles
+
+    @property
+    def discardable_tiles_riichi_declaration(self) -> list[str]:
+        """
+        List of discardable tiles just after riichi declaration.
+
+        Example:
+            >>> bot.discardable_tiles_riichi_declaration
+            ["1m", "6m"]
+        """
+        discardable_tiles = list(
+            set(
+                [
+                    tile
+                    for idx, tile in enumerate(self.tehai_mjai)
+                    if calc_shanten(
+                        convert_vec34_to_short(
+                            convert_mjai_to_vec34(
+                                self.tehai_mjai[:idx]
+                                + self.tehai_mjai[idx + 1 :]  # noqa
+                            )
+                        )
+                    )
+                    == 0
+                ]
+            )
+        )
+        return discardable_tiles
+
     # ==========================================================
     # table state
 
@@ -495,6 +544,9 @@ class Bot:
             },
             separators=(",", ":"),
         )
+
+    # ==========================================================
+    # main
 
     def think(self) -> str:
         """
