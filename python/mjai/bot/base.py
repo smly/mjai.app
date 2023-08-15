@@ -3,9 +3,9 @@ import sys
 
 from mjai.bot.consts import MJAI_VEC34_TILES
 from mjai.bot.tools import (
-    _fmt_short_call,
-    convert_mjai_tiles_to_vec34,
-    convert_tehai_vec34_as_short,
+    convert_mjai_to_vec34,
+    convert_vec34_to_short,
+    fmt_call,
     fmt_calls,
     vec34_index_to_mjai_tile,
 )
@@ -255,7 +255,7 @@ class Bot:
             >>> bot.tehai
             "123m134p4567s6z(p5z3)"
         """
-        tehai_str = convert_tehai_vec34_as_short(
+        tehai_str = convert_vec34_to_short(
             self.player_state.tehai, self.player_state.akas_in_hand
         )
         events = self.get_call_events(self.player_id)
@@ -645,7 +645,7 @@ class Bot:
         new_tehai_mjai = self.tehai_mjai.copy()
         new_tehai_mjai.remove(consumed[0])
         new_tehai_mjai.remove(consumed[1])
-        new_call_str = _fmt_short_call(
+        new_call_str = fmt_call(
             {
                 "type": "pon",
                 "consumed": consumed,
@@ -656,8 +656,8 @@ class Bot:
             self.player_id,
         )
 
-        tehai_str = convert_tehai_vec34_as_short(
-            convert_mjai_tiles_to_vec34(new_tehai_mjai),
+        tehai_str = convert_vec34_to_short(
+            convert_mjai_to_vec34(new_tehai_mjai),
             self.player_state.akas_in_hand,
         )
         events = self.get_call_events(self.player_id)
@@ -851,7 +851,7 @@ class Bot:
         new_tehai_mjai = self.tehai_mjai.copy()
         new_tehai_mjai.remove(consumed[0])
         new_tehai_mjai.remove(consumed[1])
-        new_call_str = _fmt_short_call(
+        new_call_str = fmt_call(
             {
                 "type": "chi",
                 "consumed": consumed,
@@ -861,8 +861,8 @@ class Bot:
             },
             self.player_id,
         )
-        tehai_str = convert_tehai_vec34_as_short(
-            convert_mjai_tiles_to_vec34(new_tehai_mjai),
+        tehai_str = convert_vec34_to_short(
+            convert_mjai_to_vec34(new_tehai_mjai),
             self.player_state.akas_in_hand,
         )
         events = self.get_call_events(self.player_id)
