@@ -6,6 +6,89 @@ from mock import MagicMock
 from mjai import Bot
 
 
+def test_action_kakan_mocktest():
+    bot = Bot(player_id=0)
+
+    # Case1
+    bot.player_state = MagicMock()
+    bot.player_state.tehai = list(
+        map(int, list("00000041100000021110000000000000"))
+    )
+    bot.player_state.akas_in_hand = [False, False, False]
+    bot.player_state.last_self_tsumo.return_value = "7m"
+    assert bot.tehai == "777789m7789p1s"
+    kakan_json = bot.action_kakan()
+    assert json.loads(kakan_json)["type"] == "kakan"
+    assert json.loads(kakan_json)["actor"] == 0
+    assert json.loads(kakan_json)["pai"] == "7m"
+    assert json.loads(kakan_json)["consumed"] == ["7m", "7m", "7m"]
+
+    # Case2: tsumo tile is red
+    bot.player_state = MagicMock()
+    bot.player_state.tehai = list(
+        map(int, list("00004001100000021110000000000000"))
+    )
+    bot.player_state.akas_in_hand = [True, False, False]
+    bot.player_state.last_self_tsumo.return_value = "5mr"
+    assert bot.tehai == "055589m7789p1s"
+    kakan_json = bot.action_kakan()
+    assert json.loads(kakan_json)["type"] == "kakan"
+    assert json.loads(kakan_json)["actor"] == 0
+    assert json.loads(kakan_json)["pai"] == "5mr"
+    assert json.loads(kakan_json)["consumed"] == ["5m", "5m", "5m"]
+
+    # Case3: tsumo tile is not red
+    bot.player_state = MagicMock()
+    bot.player_state.tehai = list(
+        map(int, list("00004001100000021110000000000000"))
+    )
+    bot.player_state.akas_in_hand = [True, False, False]
+    bot.player_state.last_self_tsumo.return_value = "5m"
+    assert bot.tehai == "055589m7789p1s"
+    kakan_json = bot.action_kakan()
+    assert json.loads(kakan_json)["type"] == "kakan"
+    assert json.loads(kakan_json)["actor"] == 0
+    assert json.loads(kakan_json)["pai"] == "5m"
+    assert json.loads(kakan_json)["consumed"] == ["5mr", "5m", "5m"]
+
+
+def test_action_kakan_validation():
+    bot = Bot(player_id=0)
+    logs = """
+[{"type":"start_kyoku","bakaze":"S","dora_marker":"1p","kyoku":2,
+"honba":2,"kyotaku":0,"oya":1,"scores":[800,61100,11300,26800],
+"tehais":
+[["5m","5m","8m","9m","7p","7p","8p","9p","1s","S","N","N","N"],
+["?","?","?","?","?","?","?","?","?","?","?","?","?"],
+["?","?","?","?","?","?","?","?","?","?","?","?","?"],
+["?","?","?","?","?","?","?","?","?","?","?","?","?"]]},
+{"type":"tsumo","actor":1,"pai":"?"},
+{"type":"dahai","actor":1,"pai":"F","tsumogiri":false},
+{"type":"tsumo","actor":2,"pai":"?"},
+{"type":"dahai","actor":2,"pai":"3m","tsumogiri":true},
+{"type":"tsumo","actor":3,"pai":"?"},
+{"type":"dahai","actor":3,"pai":"5m","tsumogiri":true},
+{"type":"pon","actor":0,"target":3,"pai":"5m","consumed":["5m","5m"]},
+{"type":"dahai","actor":0,"pai":"N","tsumogiri":false},
+{"type":"tsumo","actor":1,"pai":"?"},
+{"type":"dahai","actor":1,"pai":"F","tsumogiri":false},
+{"type":"tsumo","actor":2,"pai":"?"},
+{"type":"dahai","actor":2,"pai":"P","tsumogiri":true},
+{"type":"tsumo","actor":3,"pai":"?"},
+{"type":"dahai","actor":3,"pai":"S","tsumogiri":true},
+{"type":"tsumo","actor":0,"pai":"5mr"}]"""
+    logs.replace("\n", "").strip()
+    events = json.loads(logs)
+    for ev in events:
+        bot.player_state.update(json.dumps(ev))
+    kakan_json = bot.action_kakan()
+    assert bot.validate_reaction(kakan_json) is None
+    assert json.loads(kakan_json)["type"] == "kakan"
+    assert json.loads(kakan_json)["actor"] == 0
+    assert json.loads(kakan_json)["pai"] == "5mr"
+    assert json.loads(kakan_json)["consumed"] == ["5m", "5m", "5m"]
+
+
 def test_discardable():
     bot = Bot(player_id=0)
 
@@ -20,9 +103,6 @@ def test_discardable():
     ]
     # 7m is forbidden to discard
     assert bot.tehai == "789m123p11234s"
-    print(bot.tehai_mjai)
-    print(bot.forbidden_tiles)
-    print(bot.discardable_tiles)
     assert set(bot.discardable_tiles) == set(
         [
             "8m",
@@ -130,6 +210,15 @@ def test_tehai_mjai():
     assert bot.tehai_mjai.count("5pr") == 0
     assert bot.tehai_mjai.count("5s") == 0
     assert bot.tehai_mjai.count("5sr") == 1
+
+    # Case6
+    bot.player_state.tehai = list(
+        map(int, list("0111411110000100000000100000000000"))
+    )
+    bot.player_state.akas_in_hand = [True, False, True]
+    assert bot.tehai == "23405556789m5p0s"
+    assert bot.tehai_mjai.count("5m") == 3
+    assert bot.tehai_mjai.count("5mr") == 1
 
 
 def test_find_improving_tiles():

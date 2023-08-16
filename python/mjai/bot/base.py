@@ -498,12 +498,18 @@ class Bot:
             separators=(",", ":"),
         )
 
-    def action_kakan(self, consumed: list[str]) -> str:
+    def action_kakan(self) -> str:
+        consumed = [self.last_self_tsumo.replace("r", "")] * 3
+        if self.last_self_tsumo[
+            0
+        ] == "5" and not self.last_self_tsumo.endswith("r"):
+            consumed[0] = consumed[0] + "r"
+
         return json.dumps(
             {
                 "type": "kakan",
                 "actor": self.player_id,
-                "pai": self.last_kawa_tile,
+                "pai": self.last_self_tsumo,
                 "consumed": consumed,  # 3 tiles to be consumed
             },
             separators=(",", ":"),
@@ -542,6 +548,12 @@ class Bot:
                 "pai": self.last_kawa_tile,
                 "consumed": consumed,
             },
+            separators=(",", ":"),
+        )
+
+    def action_ryukyoku(self) -> str:
+        return json.dumps(
+            {"type": "ryukyoku"},
             separators=(",", ":"),
         )
 
