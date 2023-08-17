@@ -17,7 +17,7 @@ def test_action_kakan_mocktest():
     bot.player_state.akas_in_hand = [False, False, False]
     bot.player_state.last_self_tsumo.return_value = "7m"
     assert bot.tehai == "777789m7789p1s"
-    kakan_json = bot.action_kakan()
+    kakan_json = bot.action_kakan("7m")
     assert json.loads(kakan_json)["type"] == "kakan"
     assert json.loads(kakan_json)["actor"] == 0
     assert json.loads(kakan_json)["pai"] == "7m"
@@ -31,7 +31,7 @@ def test_action_kakan_mocktest():
     bot.player_state.akas_in_hand = [True, False, False]
     bot.player_state.last_self_tsumo.return_value = "5mr"
     assert bot.tehai == "055589m7789p1s"
-    kakan_json = bot.action_kakan()
+    kakan_json = bot.action_kakan("5mr")
     assert json.loads(kakan_json)["type"] == "kakan"
     assert json.loads(kakan_json)["actor"] == 0
     assert json.loads(kakan_json)["pai"] == "5mr"
@@ -45,7 +45,7 @@ def test_action_kakan_mocktest():
     bot.player_state.akas_in_hand = [True, False, False]
     bot.player_state.last_self_tsumo.return_value = "5m"
     assert bot.tehai == "055589m7789p1s"
-    kakan_json = bot.action_kakan()
+    kakan_json = bot.action_kakan("5m")
     assert json.loads(kakan_json)["type"] == "kakan"
     assert json.loads(kakan_json)["actor"] == 0
     assert json.loads(kakan_json)["pai"] == "5m"
@@ -81,7 +81,7 @@ def test_action_kakan_validation():
     events = json.loads(logs)
     for ev in events:
         bot.player_state.update(json.dumps(ev))
-    kakan_json = bot.action_kakan()
+    kakan_json = bot.action_kakan("5mr")
     assert bot.validate_reaction(kakan_json) is None
     assert json.loads(kakan_json)["type"] == "kakan"
     assert json.loads(kakan_json)["actor"] == 0
