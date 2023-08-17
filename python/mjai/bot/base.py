@@ -498,18 +498,29 @@ class Bot:
             separators=(",", ":"),
         )
 
-    def action_kakan(self) -> str:
-        consumed = [self.last_self_tsumo.replace("r", "")] * 3
-        if self.last_self_tsumo[
-            0
-        ] == "5" and not self.last_self_tsumo.endswith("r"):
+    def action_kakan(self, pai: str) -> str:
+        """
+        Return a kakan event as a JSON string.
+
+        Args:
+            pai: Tile for kakan. Mjai-style tile string (like 'N' or '5mr')
+
+        Example:
+            >>> bot.action_kakan("5m")
+            '{"type":"kakan","actor":0,"pai":"5m","consumed":["5mr","5m","5m"]}'
+
+            >>> bot.action_kakan("5sr")
+            '{"type":"kakan","actor":0,"pai":"5sr","consumed":["5s","5s","5s"]}'
+        """
+        consumed = [pai.replace("r", "")] * 3
+        if pai[0] == "5" and not pai.endswith("r"):
             consumed[0] = consumed[0] + "r"
 
         return json.dumps(
             {
                 "type": "kakan",
                 "actor": self.player_id,
-                "pai": self.last_self_tsumo,
+                "pai": pai,
                 "consumed": consumed,  # 3 tiles to be consumed
             },
             separators=(",", ":"),
