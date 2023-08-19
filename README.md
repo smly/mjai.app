@@ -31,12 +31,12 @@ The docker image is pushed to Docker Hub (`docker.io/smly/mjai-client:v3`).
 
 Please prepare a program that outputs the appropriate [mjai protocol message](https://gimite.net/pukiwiki/index.php?Mjai%20%E9%BA%BB%E9%9B%80AI%E5%AF%BE%E6%88%A6%E3%82%B5%E3%83%BC%E3%83%90) to the standard output when given input in the mjai protocol format from standard input. Name this program "bot.py" and pack it into a zip file. The zip file should contain bot.py directly under the root directory.
 
-bot.py must be a Python script, but it is also possible to include precompiled libraries if they are executable. The program will be executed in a `linux/x86_64` environment. The submission file must be 300 MB or less.
+bot.py must be a Python script, but it is also possible to include precompiled libraries if they are executable. The program will be executed in a `linux/amd64` environment. The submission file must be 300 MB or less.
 bot.py takes a player ID as its first argument. Player ID must be 0, 1, 2, or 3. Player ID 0 represents the chicha 起家, and subsequent numbers represent the shimocha 下家, toimen 対面 or kamicha 上家 of the chicha 起家. See [example code](https://github.com/smly/mjai.app/blob/main/examples/tsumogiri/bot.py) for details.
 
 ### Timeout
 
-When the `mjai.Simulator` instance creates an environment to run the submission file in docker, it specifies the `--platform linux/x86_64` option. If you want to run on a different architecture, you will have to emulate and run the container, which will be much slower. If you are debugging on an architecture other than `linux/x86_64`, you can avoid timeout errors by relaxing the timeout limit. Specify the `timeout` argument as follows. The `timeout` is set to 2.0 by default.
+When the `mjai.Simulator` instance creates an environment to run the submission file in docker, it specifies the `--platform linux/amd64` option. If you want to run on a different architecture, you will have to emulate and run the container, which will be much slower. If you are debugging on an architecture other than `linux/amd64`, you can avoid timeout errors by relaxing the timeout limit. Specify the `timeout` argument as follows. The `timeout` is set to 2.0 by default.
 
 ```py
 Simulator(submissions, logs_dir="./logs", timeout=10.0).run()
@@ -114,7 +114,7 @@ The procedures executed by Simulator can be checked and debugged one by one as f
 % docker pull docker.io/smly/mjai-client:v3
 
 # launch
-% CONTAINER_ID=`docker run -d --rm -p 28080:3000 --mount "type=bind,src=/Users/smly/gitws/mjai.app/examples/weakml.zip,dst=/bot.zip,readonly" smly/mjai-client:v3 sleep infinity`
+% CONTAINER_ID=`docker run -d --rm -p 28080:3000 --mount "type=bind,src=/Users/smly/gitws/mjai.app/examples/rulebase.zip,dst=/bot.zip,readonly" smly/mjai-client:v3 sleep infinity`
 
 # install
 % docker exec ${CONTAINER_ID} unzip -q /bot.zip
