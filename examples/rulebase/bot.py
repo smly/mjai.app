@@ -1,8 +1,9 @@
-"""Reference implementtation with using high-level API.
-"""
 import sys
 
 from loguru import logger
+
+logger.remove()
+logger.add(sys.stderr, format="<green>{time:HH:mm:ss}</green> <level>{level} {message}</level>")  # noqa
 
 from mjai import Bot
 
