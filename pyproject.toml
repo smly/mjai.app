@@ -11,7 +11,7 @@ classifiers = [
 ]
 dependencies = ["mahjong ~= 1.2.0", "loguru", "requests"]
 [project.optional-dependencies]
-test = ["pytest ~=7.4.0", "mock", "flake8", "black", "isort", "pyright"]
+test = ["pytest ~=8.1.1", "mock", "flake8", "black", "isort", "pyright"]
 
 [tool.maturin]
 features = ["pyo3/extension-module"]
