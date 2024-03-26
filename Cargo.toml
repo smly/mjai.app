@@ -34,5 +34,5 @@ mimalloc = { version = "0.1", default-features = false, optional = true }
 riichi-tools-rs = { version = "0.0.73", git = "https://github.com/harphield/riichi-tools-rs", rev = "cc3eb9f" }
 
 [dependencies.pyo3]
-version = "0.19"
+version = "0.21"
 features = ["multiple-pymethods", "anyhow"]
