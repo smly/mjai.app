@@ -4,12 +4,32 @@ build-backend = "maturin"
 
 [project]
 name = "mjai"
+version = "0.2.0"
+description = "Mahjong game simulator for evaluating submission files on mjai.app"
+authors = [{ name = "smly", email = "eown.er+mjai@gmail.com" }]
+readme = "README.md"
 requires-python = ">=3.10"
+license = { file = "LICENSE" }
+keywords = ["mahjong", "mjai", "game", "simulator"]
 classifiers = [
     "Programming Language :: Rust",
-    "Programming Language :: Python :: Implementation :: CPython",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: AGPL-3.0-or-later",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Games/Entertainment :: Board Games",
 ]
 dependencies = ["mahjong ~= 1.2.0", "loguru", "requests"]
+
+[project.urls]
+Repository = "https://github.com/smly/mjai.app"
+Docuemntation = "https://github.com/smly/mjai.app/blob/main/README.md"
+
 [project.optional-dependencies]
 test = ["pytest ~=8.1.1", "mock", "flake8", "black", "isort", "pyright"]
 

@@ -10,7 +10,6 @@ use anyhow::Result;
 use flate2::read::GzEncoder;
 use flate2::Compression;
 use pyo3::prelude::*;
-use rayon::prelude::*;
 
 #[pyclass]
 #[derive(Clone, Default)]

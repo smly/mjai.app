@@ -3,8 +3,7 @@ mod game;
 mod result;
 mod single_match;
 
-pub use board::Board;
-pub use result::{GameResult, KyokuEndState};
+pub use result::GameResult;
 
 use crate::py_helper::add_submodule;
 use single_match::Match;

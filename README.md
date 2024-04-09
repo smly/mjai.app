@@ -1,7 +1,7 @@
 # mjai-simulator
 
-[AI Jansou](https://mjai.app) is a platform for mahjong AI competition.
-This repository contains the implementation of mahjong game simulator for evaluating submission files on AI Jansou.
+[mjai.app](https://mjai.app) is a platform for mahjong AI competition.
+This repository contains the implementation of mahjong game simulator for evaluating submission files on mjai.app.
 
 ## Usage
 
@@ -179,7 +179,12 @@ OK
 
 ## Development
 
-Confirmed working with rustc 1.70.0 (90c541806 2023-05-31).
+Confirmed working with rustc 1.75.0 (82e1608df 2023-12-21).
+
+```sh
+$ pip install maturin  # install build tool
+$ maturin build --release --locked --target aarch64-apple-darwin --out dist
+```
 
 ## Special Thanks
 
