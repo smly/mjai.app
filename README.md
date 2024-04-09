@@ -20,6 +20,27 @@ submissions = [
 mjai.Simulator(submissions, logs_dir="./logs").run()
 ```
 
+This package also provides a base class for developing bots that communicate via the mjai protocol.
+
+```py
+from mjai import Bot
+
+
+class RulebaseBot(Bot):
+    def think(self) -> str:
+        if self.can_tsumo_agari:
+            return self.action_tsumo_agari()
+        elif self.can_ron_agari:
+            return self.action_ron_agari()
+        elif self.can_riichi:
+            return self.action_riichi()
+
+        ...
+
+if __name__ == "__main__":
+    RulebaseBot(player_id=int(sys.argv[1])).start()
+```
+
 ### Docker Image
 
 Submission files are deployed in a Docker container and run as a Docker container.
@@ -29,7 +50,7 @@ The docker image is pushed to Docker Hub (`docker.io/smly/mjai-client:v3`).
 
 ### Submission format
 
-Please prepare a program that outputs the appropriate [mjai protocol message](https://gimite.net/pukiwiki/index.php?Mjai%20%E9%BA%BB%E9%9B%80AI%E5%AF%BE%E6%88%A6%E3%82%B5%E3%83%BC%E3%83%90) to the standard output when given input in the mjai protocol format from standard input. Name this program "bot.py" and pack it into a zip file. The zip file should contain bot.py directly under the root directory.
+Please prepare a program that outputs the appropriate [mjai protocol message](https://mjai.app/docs/mjai-protocol) to the standard output when given input in the mjai protocol format from standard input. Name this program "bot.py" and pack it into a zip file. The zip file should contain bot.py directly under the root directory.
 
 bot.py must be a Python script, but it is also possible to include precompiled libraries if they are executable. The program will be executed in a `linux/amd64` environment. The submission file must be 1000 MB or less.
 bot.py takes a player ID as its first argument. Player ID must be 0, 1, 2, or 3. Player ID 0 represents the chicha 起家, and subsequent numbers represent the shimocha 下家, toimen 対面 or kamicha 上家 of the chicha 起家. See [example code](https://github.com/smly/mjai.app/blob/main/examples/tsumogiri/bot.py) for details.
@@ -48,9 +69,9 @@ If the simulation is interrupted, the docker container may not terminate success
 % for cid in `docker ps -a --filter ancestor=smly/mjai-client:v3 --format "{{.ID}}"`; do docker rm -f $cid; done
 ```
 
-## Protocol
+## Mjai Protocol
 
-The protocol is basically based on the [Mjai Protocol](https://gimite.net/pukiwiki/index.php?Mjai%20%E9%BA%BB%E9%9B%80AI%E5%AF%BE%E6%88%A6%E3%82%B5%E3%83%BC%E3%83%90), but customized based on [Mortal's Mjai Engine implementation](https://github.com/Equim-chan/Mortal/blob/main/libriichi/src/mjai/event.rs). The following points are customized:
+[Our Mjai protocol](https://mjai.app/docs/mjai-protocol) is basically based on the [Gimite's original Mjai Protocol](https://gimite.net/pukiwiki/index.php?Mjai%20%E9%BA%BB%E9%9B%80AI%E5%AF%BE%E6%88%A6%E3%82%B5%E3%83%BC%E3%83%90), but customized based on [Mortal's Mjai Engine implementation](https://github.com/Equim-chan/Mortal/blob/main/libriichi/src/mjai/event.rs). The following points are customized:
 
 - Messages are sent and received by standard input and standard output.
 - The game server sends messages collectively up to the event that the player can act on.
