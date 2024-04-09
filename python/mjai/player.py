@@ -5,6 +5,7 @@ Docker コンテナに submission file を配置して実行するためのラ�
 2. Docker コンテナに submission file のアーカイブを展開する
 3. Docker コンテナ内で `python/mjai/http_server/server.py` を実行する
 """
+
 import json
 import shutil
 import subprocess
@@ -119,14 +120,15 @@ class MjaiPlayerClient:
 
         # Wait until the server is ready
         logger.info(f"Wait until the player {player_id} is ready")
+
         # Workaround: http server が立ち上がる前にリクエストが飛ぶとエラーになる
-        time.sleep(1.0)
+        time.sleep(2.0)
 
         wait_start_ts = time.time()
         while True:
             try:
                 resp = requests.get(
-                    f"http://localhost:{self.port_num}", timeout=0.1
+                    f"http://localhost:{self.port_num}", timeout=1
                 )
                 if resp.status_code == 200:
                     break

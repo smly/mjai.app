@@ -56,13 +56,11 @@ The protocol is basically based on the [Mjai Protocol](https://gimite.net/pukiwi
 - The game server sends messages collectively up to the event that the player can act on.
 - When the player does not send the appropriate event message, it is treated as a chombo and a mangan-sized penalty is paid.
 - If the player does not send a message within 2 seconds, it is treated as a chombo and a mangan-sized penalty is paid.
-- The first kyoku is not necessarily East 1.
+- First round (kyoku) is not necessarily East 1.
 
-### The first kyoku is not necessarily East 1
+### First round is not necessarily East 1
 
-エラーが発生した局は流局扱いとなり、すべてのプレイヤーのプログラムは終了させられる。
-すべてのプレイヤーのプログラムは再起動され、エラーが発生した次の局からゲームが再開される。
-そのためプレイヤーのプログラムが初めて受け取る局は東 1 局とは限らない。
+If an error occurs in any one of the 4 players, the game is treated as a abortive draw (ryukyoku; 流局). At this time, all 4 players' containers are terminated. The players' containers are restarted and the game is resumed from the next round in which an error occurs. Therefore, the first round received by the player may not be East 1.
 
 The following are messages sent and received as seen from player 0.
 `<-` denotes events for the player.
@@ -72,10 +70,11 @@ The following are messages sent and received as seen from player 0.
 # Game resumed from S1-1
 0 <- [{"type":"start_game","names":["0","1","2","3"],"id":0}]
 0 -> {"type":"none"}
-# S1-1 流局による終局イベント (first actionable event が来る前に局が終わる)
+
 # NOTE: No ryukyoku events are sent from the game server.
 0 <- [{"type":"end_kyoku"}]
 0 -> {"type":"none"}
+
 # S2-2 first tsumo tile
 0 <- [{"type":"start_kyoku","bakaze":"S","dora_marker":"1p","kyoku":2,"honba":2,"kyotaku":0,"oya":1,"scores":[800,61100,11300,26800],"tehais":[["4p","4s","P","3p","1p","5s","2m","F","1m","7s","9m","6m","9s"],["?","?","?","?","?","?","?","?","?","?","?","?","?"],["?","?","?","?","?","?","?","?","?","?","?","?","?"],["?","?","?","?","?","?","?","?","?","?","?","?","?"]]},{"type":"tsumo","actor":1,"pai":"?"},{"type":"dahai","actor":1,"pai":"F","tsumogiri":false},{"type":"tsumo","actor":2,"pai":"?"},{"type":"dahai","actor":2,"pai":"3m","tsumogiri":true},{"type":"tsumo","actor":3,"pai":"?"},{"type":"dahai","actor":3,"pai":"1m","tsumogiri":true},{"type":"tsumo","actor":0,"pai":"3s"}]
 0 -> {"type":"dahai","pai":"3s","actor":0,"tsumogiri":true}
@@ -116,9 +115,8 @@ The procedures executed by Simulator can be checked and debugged one by one as f
 # launch
 % CONTAINER_ID=`docker run -d --rm -p 28080:3000 --mount "type=bind,src=/Users/smly/gitws/mjai.app/examples/rulebase.zip,dst=/bot.zip,readonly" smly/mjai-client:v3 sleep infinity`
 
-# install
+# install bot program
 % docker exec ${CONTAINER_ID} unzip -q /bot.zip
-% docker cp python/mjai/http_server/server.py ${CONTAINER_ID}:/workspace/00__server__.py
 
 # debug
 % docker exec -it ${CONTAINER_ID} /workspace/.pyenv/shims/python -u bot.py 0
@@ -137,6 +135,9 @@ The procedures executed by Simulator can be checked and debugged one by one as f
 ### Debug with http sever
 
 ```bash
+# install http server interface of mjai protocol
+% docker cp python/mjai/http_server/server.py ${CONTAINER_ID}:/workspace/00__server__.py
+
 # http server mode. `0` is the player index.
 % docker exec -it ${CONTAINER_ID} /workspace/.pyenv/shims/python 00__server__.py 0
 ```

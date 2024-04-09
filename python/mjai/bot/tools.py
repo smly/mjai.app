@@ -6,6 +6,7 @@ Tile Conversion:
 - vec34_index_to_mjai_tile(index: int) -> str
 
 """
+
 from mjai.bot.consts import MJAI_VEC34_TILES
 from mjai.mlibriichi.tools import calc_shanten  # noqa, type: ignore
 from mjai.mlibriichi.tools import find_improving_tiles  # noqa, type: ignore
@@ -223,9 +224,11 @@ def fmt_call(ev: dict, player_id: int) -> str:
         return "(p{}{}{})".format(
             __deaka_short_tile(call_tiles[0]),
             rel_pos,
-            "r"
-            if any([__is_aka_short_tile(tile) for tile in call_tiles])
-            else "",
+            (
+                "r"
+                if any([__is_aka_short_tile(tile) for tile in call_tiles])
+                else ""
+            ),
         )
     elif ev["type"] == "chi":
         color = ev["pai"][1]
@@ -259,9 +262,11 @@ def fmt_call(ev: dict, player_id: int) -> str:
         return "(k{}{}{})".format(
             __deaka_short_tile(call_tiles[0]),
             rel_pos,
-            "r"
-            if any([__is_aka_short_tile(tile) for tile in call_tiles])
-            else "",
+            (
+                "r"
+                if any([__is_aka_short_tile(tile) for tile in call_tiles])
+                else ""
+            ),
         )
     elif ev["type"] in ["ankan"]:
         rel_pos = (ev["target"] - player_id + 4) % 4
@@ -274,9 +279,11 @@ def fmt_call(ev: dict, player_id: int) -> str:
         return "(k{}{}{})".format(
             __deaka_short_tile(call_tiles[0]),
             rel_pos,
-            "r"
-            if any([__is_aka_short_tile(tile) for tile in call_tiles])
-            else "",
+            (
+                "r"
+                if any([__is_aka_short_tile(tile) for tile in call_tiles])
+                else ""
+            ),
         )
     elif ev["type"] == "kakan":
         rel_pos = 0  # NOTE: `rel_pose` will be replaced in `fmt_calls`
@@ -290,9 +297,11 @@ def fmt_call(ev: dict, player_id: int) -> str:
         return "(s{}{}{})".format(
             __deaka_short_tile(call_tiles[0]),
             rel_pos,
-            "r"
-            if any([__is_aka_short_tile(tile) for tile in call_tiles])
-            else "",
+            (
+                "r"
+                if any([__is_aka_short_tile(tile) for tile in call_tiles])
+                else ""
+            ),
         )
     else:
         return ""
