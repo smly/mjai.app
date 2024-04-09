@@ -112,4 +112,3 @@ jobs:
         with:
           user: smly
           password: ${{ secrets.PYPI_API_TOKEN }}
-          repository_url: https://upload.pypi.org/legacy/
