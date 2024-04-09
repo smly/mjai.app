@@ -15,7 +15,7 @@ classifiers = [
     "Programming Language :: Rust",
     "Environment :: Console",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: AGPL-3.0-or-later",
+    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
