@@ -24,7 +24,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Games/Entertainment :: Board Games",
 ]
-dependencies = ["loguru", "requests"]
+dependencies = ["mahjong ~= 1.2.0", "loguru", "requests"]
 
 [project.urls]
 Repository = "https://github.com/smly/mjai.app"
