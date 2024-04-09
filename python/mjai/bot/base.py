@@ -748,9 +748,11 @@ class Bot:
         )
         candidates = [
             (
-                vec34_index_to_mjai_tile(discard_tile_idx)
-                if discard_tile_idx < 34
-                else "",
+                (
+                    vec34_index_to_mjai_tile(discard_tile_idx)
+                    if discard_tile_idx < 34
+                    else ""
+                ),
                 [
                     vec34_index_to_mjai_tile(tile_idx)
                     for tile_idx in improving_tile_indices
@@ -953,9 +955,11 @@ class Bot:
         )
         candidates = [
             (
-                vec34_index_to_mjai_tile(discard_tile_idx)
-                if discard_tile_idx < 34
-                else "",
+                (
+                    vec34_index_to_mjai_tile(discard_tile_idx)
+                    if discard_tile_idx < 34
+                    else ""
+                ),
                 [
                     vec34_index_to_mjai_tile(tile_idx)
                     for tile_idx in improving_tile_indices

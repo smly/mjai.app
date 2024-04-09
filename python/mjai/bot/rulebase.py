@@ -1,5 +1,6 @@
 """Reference implementtation with using high-level API.
 """
+
 from loguru import logger
 
 from mjai import Bot

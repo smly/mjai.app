@@ -1,5 +1,6 @@
 """Reference implementtation with using high-level API.
 """
+
 from mjai import Bot
 
 

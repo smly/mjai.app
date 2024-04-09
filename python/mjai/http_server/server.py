@@ -60,7 +60,7 @@ class MyHTTPServer(HTTPServer):
         self.on_before_serve = kwargs.pop("on_before_serve", None)
         HTTPServer.__init__(self, *args, **kwargs)
 
-    def serve_forever(self):
+    def serve_forever(self):  # type: ignore
         if self.on_before_serve:
             self.on_before_serve(self)
         HTTPServer.serve_forever(self)
