@@ -1,4 +1,4 @@
-torch==2.0.1
+torch==2.2.2
 numpy==1.25.2
 loguru
 mahjong
