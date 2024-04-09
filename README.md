@@ -3,6 +3,15 @@
 [mjai.app](https://mjai.app) is a platform for mahjong AI competition.
 This repository contains the implementation of mahjong game simulator for evaluating submission files on mjai.app.
 
+## Installation
+
+`mjai` package is available at the Python Package Index (PyPI).
+You can install it with `pip` command.
+
+```sh
+$ pip install mjai
+```
+
 ## Usage
 
 You can simulate a mahjong game by specifying submission files as shown in the code below.
