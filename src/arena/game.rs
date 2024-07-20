@@ -383,7 +383,10 @@ impl BatchGame {
                     }
                     Err(_err) => {
                         // Rescure game result
-                        let err_msg = _err.source().unwrap().to_string();
+                        let err_msg = match _err.source() {
+                            Some(err) => err.to_string(),
+                            None => "unknown error".to_string(),
+                        };
                         let err_deltas = get_error_delta(game)?;
                         println!("{}", err_msg);
 
