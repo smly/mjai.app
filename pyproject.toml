@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "mjai"
-version = "0.2.0"
+version = "0.2.1"
 description = "Mahjong game simulator for evaluating submission files on mjai.app"
 authors = [{ name = "smly", email = "eown.er+mjai@gmail.com" }]
 readme = "README.md"

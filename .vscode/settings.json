@@ -16,8 +16,7 @@
   ],
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    // isort
-    "source.organizeImports": true
+    "source.organizeImports": "explicit"
   },
   "python.formatting.blackArgs": [],
   "python.formatting.provider": "none",
