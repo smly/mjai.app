@@ -31,7 +31,7 @@ Repository = "https://github.com/smly/mjai.app"
 Docuemntation = "https://github.com/smly/mjai.app/blob/main/README.md"
 
 [project.optional-dependencies]
-test = ["pytest ~=8.2.2", "mock", "flake8", "black", "isort", "pyright"]
+test = ["pytest ~=8.3.2", "mock", "flake8", "black", "isort", "pyright"]
 
 [tool.maturin]
 features = ["pyo3/extension-module"]
