@@ -1,5 +1,4 @@
-"""Reference implementtation with using high-level API.
-"""
+"""Reference impl with using high-level API."""
 
 from loguru import logger
 
