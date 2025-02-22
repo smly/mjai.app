@@ -134,7 +134,7 @@ class MjaiPlayerClient:
                     break
             except requests.exceptions.ConnectionError:
                 time.sleep(0.1)
-                if time.time() - wait_start_ts > 10.0:
+                if time.time() - wait_start_ts > 20.0:
                     raise ValueError(
                         "Failed to receive response from http server: timeout"
                     )
@@ -180,7 +180,7 @@ class MjaiPlayerClient:
             if json.loads(events)[0]["type"] in ["start_game", "start_kyoku"]:
                 # Workaround: To avoid timeouts
                 # Some bots time out when loading models with start_game.
-                timeout_per_action = 10.0
+                timeout_per_action = 20.0
 
             resp = requests.post(
                 f"http://localhost:{self.port_num}",
