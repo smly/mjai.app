@@ -44,7 +44,7 @@ class Simulator:
         self,
         submissions: list[Path] | list[str],
         logs_dir: Path | str,
-        timeout: float = 2.0,
+        timeout: float = 3.0,
         port: int = 28090,
         seed: tuple[int, int] = (10000, 2000),
     ):

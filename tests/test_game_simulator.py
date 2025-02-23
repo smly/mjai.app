@@ -65,7 +65,7 @@ def test_regular_game_resume():
                 "examples/tsumogiri.zip",
                 "examples/tsumogiri.zip",
             ]
-            timeout = 2.0
+            timeout = 3.0
             port = 28088
             players, agents = [], []
             for player_idx, submission in enumerate(submissions):

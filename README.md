@@ -66,10 +66,10 @@ bot.py takes a player ID as its first argument. Player ID must be 0, 1, 2, or 3.
 
 ### Timeout
 
-When the `mjai.Simulator` instance creates an environment to run the submission file in docker, it specifies the `--platform linux/amd64` option. If you want to run on a different architecture, you will have to emulate and run the container, which will be much slower. If you are debugging on an architecture other than `linux/amd64`, you can avoid timeout errors by relaxing the timeout limit. Specify the `timeout` argument as follows. The `timeout` is set to 2.0 by default.
+When the `mjai.Simulator` instance creates an environment to run the submission file in docker, it specifies the `--platform linux/amd64` option. If you want to run on a different architecture, you will have to emulate and run the container, which will be much slower. If you are debugging on an architecture other than `linux/amd64`, you can avoid timeout errors by relaxing the timeout limit. Specify the `timeout` argument as follows. The `timeout` is set to 3.0 by default.
 
 ```py
-Simulator(submissions, logs_dir="./logs", timeout=10.0).run()
+Simulator(submissions, logs_dir="./logs", timeout=20.0).run()
 ```
 
 If the simulation is interrupted, the docker container may not terminate successfully. If past docker containers remain, the new docker container may fail to launch due to duplicate HTTP ports. You can remove all docker containers that have the `smly/mjai-client` image as an ancestor in a batch as follows:
