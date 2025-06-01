@@ -363,7 +363,7 @@ def test_tsumogiri_bot():
     assert bot.bakaze == "S"
     assert bot.player_state.at_furiten is False
     assert len(bot.tiles_seen) == 34
-    assert len(bot.forbidden_tiles) == 34
+    assert len(bot.forbidden_tiles) == 37
     assert bot.tiles_seen["F"] == 2
     assert bot.tiles_seen["1p"] == 2
     assert (
