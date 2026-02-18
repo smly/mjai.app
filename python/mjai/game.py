@@ -161,7 +161,9 @@ class Simulator:
         honba: int = last_start_kyoku_event["honba"]  # type: ignore
         kyotaku: int = last_start_kyoku_event["kyotaku"]  # type: ignore
         oya: int = last_start_kyoku_event["oya"]  # type: ignore
-        if bakaze != "E" and kyoku >= 4:
+        # 南1局 → `4` のようにゼロ基準の値に変換する
+        zero_indexed_kyoku = kyoku_to_zero_indexed_kyoku(bakaze, kyoku)
+        if zero_indexed_kyoku >= 7:
             # オーラス
             # - 親の delta が positive かつ 1位なら終了 (True)
             # - 親の delta が 0 以下なら終了 (True)
@@ -169,9 +171,6 @@ class Simulator:
                 return None
             if last_delta[oya] <= 0:
                 return None
-
-        # 南1局 → `4` のようにゼロ基準の値に変換する
-        zero_indexed_kyoku = kyoku_to_zero_indexed_kyoku(bakaze, kyoku)
 
         # 親の連続か否か
         if last_delta[oya] > 0:
