@@ -136,6 +136,12 @@ class Simulator:
                 last_kyoku_riichi_count += 1
 
         if first_start_kyoku_event is None:
+            # There are terminal cases where Match returns only
+            # start_game/end_game without any kyoku in continue mode.
+            # Treat them as a clean finish, not a runtime error.
+            event_types = {event["type"] for event in events}
+            if event_types.issubset({"start_game", "end_game"}):
+                return None
             raise RuntimeError("can't start game")
         scores: list[int] = first_start_kyoku_event["scores"]  # type: ignore
         last_delta: list[int] = [0, 0, 0, 0]
