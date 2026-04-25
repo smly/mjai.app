@@ -1,3 +1,10 @@
+> [!WARNING]
+> **This service (mjai.app) is shutting down on April 30, 2026.**
+> The old RiichiLab (mjai.app) is being retired. Login has already been disabled, and the entire system, including all data, will be deleted on April 30. This repository will then be archived. The renewed platform is now live at **<https://riichi.dev/>**.
+> See [#203](https://github.com/smly/mjai.app/discussions/203) for the full announcement.
+
+-----
+
 # mjai-simulator
 
 [mjai.app](https://mjai.app) is a platform for mahjong AI competition.
