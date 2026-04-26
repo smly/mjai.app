@@ -426,7 +426,10 @@ class Bot:
         """
         assert self.player_state.forbidden_tiles is not None
         assert len(self.player_state.forbidden_tiles) == len(MJAI_VEC34_TILES)
-        return dict(zip(MJAI_VEC34_TILES, self.player_state.forbidden_tiles))
+        forbidden_tiles = dict(zip(MJAI_VEC34_TILES, self.player_state.forbidden_tiles))
+        for red_tile in ["5mr", "5pr", "5sr"]:
+            forbidden_tiles[red_tile] = forbidden_tiles[red_tile[0:2]]
+        return forbidden_tiles
 
     # ==========================================================
     # actions

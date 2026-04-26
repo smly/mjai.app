@@ -118,6 +118,36 @@ def test_discardable():
     )
 
 
+def test_red_discardable():
+    bot = Bot(player_id=0)
+
+    # Case1: kuikae example from https://riichi.wiki/Kuikae
+    bot.player_state = MagicMock()
+    # with 5mr
+    bot.player_state.tehai = list(
+        map(int, list("00001110011100000021110000000000000"))
+    )
+    bot.player_state.akas_in_hand = [True, False, False]
+    bot.player_state.forbidden_tiles = [
+        x == "1" for x in list("0000100000000000000000000000000000")
+    ]
+    # 5mr is forbidden to discard
+    assert bot.tehai == "067m123p11234s"
+    assert set(bot.discardable_tiles) == set(
+        [
+            "6m",
+            "7m",
+            "1p",
+            "2p",
+            "3p",
+            "1s",
+            "2s",
+            "3s",
+            "4s",
+        ]
+    )
+
+
 def test_discardable_tiles_riichi_declaration():
     bot = Bot(player_id=0)
 
@@ -333,7 +363,7 @@ def test_tsumogiri_bot():
     assert bot.bakaze == "S"
     assert bot.player_state.at_furiten is False
     assert len(bot.tiles_seen) == 34
-    assert len(bot.forbidden_tiles) == 34
+    assert len(bot.forbidden_tiles) == 37
     assert bot.tiles_seen["F"] == 2
     assert bot.tiles_seen["1p"] == 2
     assert (
