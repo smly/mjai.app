@@ -136,6 +136,12 @@ class Simulator:
                 last_kyoku_riichi_count += 1
 
         if first_start_kyoku_event is None:
+            # There are terminal cases where Match returns only
+            # start_game/end_game without any kyoku in continue mode.
+            # Treat them as a clean finish, not a runtime error.
+            event_types = {event["type"] for event in events}
+            if event_types.issubset({"start_game", "end_game"}):
+                return None
             raise RuntimeError("can't start game")
         scores: list[int] = first_start_kyoku_event["scores"]  # type: ignore
         last_delta: list[int] = [0, 0, 0, 0]
@@ -155,7 +161,9 @@ class Simulator:
         honba: int = last_start_kyoku_event["honba"]  # type: ignore
         kyotaku: int = last_start_kyoku_event["kyotaku"]  # type: ignore
         oya: int = last_start_kyoku_event["oya"]  # type: ignore
-        if bakaze != "E" and kyoku >= 4:
+        # 南1局 → `4` のようにゼロ基準の値に変換する
+        zero_indexed_kyoku = kyoku_to_zero_indexed_kyoku(bakaze, kyoku)
+        if zero_indexed_kyoku >= 7:
             # オーラス
             # - 親の delta が positive かつ 1位なら終了 (True)
             # - 親の delta が 0 以下なら終了 (True)
@@ -163,9 +171,6 @@ class Simulator:
                 return None
             if last_delta[oya] <= 0:
                 return None
-
-        # 南1局 → `4` のようにゼロ基準の値に変換する
-        zero_indexed_kyoku = kyoku_to_zero_indexed_kyoku(bakaze, kyoku)
 
         # 親の連続か否か
         if last_delta[oya] > 0:
