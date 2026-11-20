@@ -206,7 +206,7 @@ def fmt_calls(events: list[dict], player_id: int) -> str:
         for i, call in enumerate(calls):
             if call[2:4] == tile and call[1] == "p":
                 rel_pose = call[4]
-                kakan_call[4] = rel_pose
+                kakan_call = f"{kakan_call[:4]}{rel_pose}{kakan_call[5:]}"
                 calls[i] = kakan_call
                 break
 
