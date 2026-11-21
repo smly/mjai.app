@@ -128,6 +128,14 @@ impl PlayerState {
                 if self.riichi_accepted[0] && !tsumogiri {
                     bail!("cannot discard after riichi");
                 }
+                if self.riichi_declared[0] && !self.riichi_accepted[0] {
+                    let valid = if self.shanten == 1 {
+                        self.next_shanten_discards[pai.deaka().as_usize()]
+                    } else {
+                        self.keep_shanten_discards[pai.deaka().as_usize()]
+                    };
+                    ensure!(valid, "cannot discard after riichi declaration");
+                }
             }
 
             Event::Reach { .. } => {
